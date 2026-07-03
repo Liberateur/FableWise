@@ -2,6 +2,13 @@
 
 All notable changes to **fablewise** are documented here. Format inspired by [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). The plugin was developed iteratively on 2026-07-02/03 under its working name *plan-runner*, renamed *fablewise* for public release.
 
+## [0.25.0] — 2026-07-03
+
+**The lock on the door.** Opt-in Stop hook against premature stops; Opus-for-runs re-examined against 2026 docs and re-rejected. See D-25.
+
+- **`hooks/fablewise-stop.sh`** (+ `hooks/hooks.json`): active only when `.claude/fablewise-autorun` names a plan; blocks any session stop while the plan is neither `✅` nor `🔴`, with "re-read the plan and continue" as feedback. Legitimate non-terminal exits (gate, user awaited) = record in plan + delete the flag file (contract added to `/plan-run`). Native consecutive-block cap bounds worst cases. Hook support in the desktop app untested.
+- **Docs**: Sonnet 5 and Opus 4.8 share the same 1M context window (official) — a premium run seat buys zero autonomy headroom; D-01's run guard stands.
+
 ## [0.24.0] — 2026-07-03
 
 **Delegation, sharpened.** See D-24.

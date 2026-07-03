@@ -42,6 +42,7 @@ Cowork (Claude desktop app): **Customize > Settings > Plugins** > **Add marketpl
 
 - **CLI (Claude Code)** — `scripts/fablewise-loop.sh <plan.md> [max_iter]` from the project root: relaunches headless Sonnet sessions until the plan reaches one of its three legitimate ends — `✅` done (exit 0), `🔴` blockage → Fable arbitration (exit 2), gate / no progress → your eye is required (exit 3). It never crosses a blockage.
 - **Claude desktop app (Cowork)** — no headless relaunch exists, so use a **scheduled task** in the project's workspace: e.g. hourly, prompt `/plan-run <plan> — autonomous, no questions`. The scheduled session must be **Sonnet** (the model guard blocks Fable/Opus). On a terminal state (`✅`, `🔴`, gate pending) the run detects it in one read and offers to disable the schedule instead of re-working.
+- **Stop hook (opt-in, anti-premature-stop)** — `echo "<plan.md>" > .claude/fablewise-autorun` before launching: the plugin's `Stop` hook then blocks any session stop while the plan is neither `✅` nor `🔴`, feeding back "re-read the plan and continue". The run exits legitimately by writing a terminal state — or, at a gate, by recording it in the plan and deleting the flag file. Claude Code's native consecutive-block cap bounds worst cases; hook support in the desktop app is untested. The hook prevents stopping *early*; the loop/schedule cures sessions that *die* — combine them for full coverage.
 
 ## Commands
 
