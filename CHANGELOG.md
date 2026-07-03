@@ -2,6 +2,13 @@
 
 All notable changes to **fablewise** are documented here. Format inspired by [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). The plugin was developed iteratively on 2026-07-02/03 under its working name *plan-runner*, renamed *fablewise* for public release.
 
+## [0.24.0] — 2026-07-03
+
+**Delegation, sharpened.** See D-24.
+
+- **Heavy-task detection everywhere**: any UNTAGGED task (legacy plan or design-time omission) is assessed before execution; detected heavy → delegated AND tagged `[contexte: lourd]` in the plan file, so relaunches benefit.
+- **Full-delegation mode (adaptive)**: on user request at launch ("délègue tout") or automatically at the run's first compaction, every remaining task runs in a `task-executor` — the session keeps only orchestration, on-evidence criteria constatation and plan upkeep. Not the default: inline stays the base economy (~30k harness tokens saved per sequential task, D-13/D-21).
+
 ## [0.23.0] — 2026-07-03
 
 **Loop until done.** After 0.22, the residual cause of premature stops is session mortality; a session cannot relaunch itself, so the loop lives outside — and never crosses a blockage or a gate (those are decisions, not failures). See D-23.
