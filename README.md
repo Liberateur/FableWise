@@ -27,7 +27,6 @@ Then, **from a Sonnet session**:
 
 ```
 your request
-   │
    ├─ Sonnet explores the project           (cheap, read-only)
    ├─ FABLE challenges your request         (short, interactive — asks before assuming)
    ├─ Sonnet researches what's missing      (web + project, parallel, quarantined)
@@ -77,7 +76,7 @@ your request
 
 ## Contributing
 
-Issues and PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). The golden rule: any pipeline change must propagate across all four layers (skills, agents, plan template, README).
+Issues and PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and [DECISIONS.md](DECISIONS.md) (the *why* behind every mechanism — read it before proposing changes). A complete example plan lives in [examples/example-plan.md](examples/example-plan.md). The golden rule: any pipeline change must propagate across all four layers (skills, agents, plan template, README).
 
 ## License
 
