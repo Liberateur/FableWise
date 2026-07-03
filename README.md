@@ -27,16 +27,16 @@ Cowork (Claude desktop app): **Customize > Settings > Plugins** > **Add marketpl
 2. **Sonnet** explores your project and returns a compressed synthesis — the Fable session never reads raw files or browses the web itself (cost + injection quarantine).
 3. **Fable** challenges — asks only when there's a real comprehension doubt or structuring choice.
 4. **Sonnet/Haiku** run delegated web research (capped, quarantined) and extract verbatim evidence from the files the plan will cite.
-5. **Fable writes the plan itself**: grouped tasks with chewed-through operating procedures, binary criteria, scope tags, pre-decided Plan Bs, a pre-mortem — written for Sonnet to apply without re-deciding.
+5. **Fable writes the plan itself**: grouped tasks with chewed-through operating procedures, machine-checkable binary criteria (user validation batched into gate tasks), scope tags, `[contexte: lourd]` tags on heavy-output tasks, pre-decided Plan Bs, a pre-mortem — written for Sonnet to apply without re-deciding.
 6. **Haiku** gate-checks every reference in one scripted pass — nothing hallucinated.
 7. The plan lands **🟢 ready** — it just waits for you to launch `/plan-run`.
 
 **`/plan-run` — execute it (from a fresh Sonnet session):**
 
-1. The session applies tasks itself, following operating procedures to the letter (anchored edits, frozen tests) — and **dispatches parallel executors when task scopes (`[touche:]`) don't overlap**.
-2. Every task's binary criteria are checked on evidence — commands run, diffs read, never taken on faith.
+1. The session applies tasks itself, following operating procedures to the letter (anchored edits, frozen tests) — **dispatches parallel executors when task scopes (`[touche:]`) don't overlap**, and **always delegates `[contexte: lourd]` tasks** (capture-heavy audits, builds, verbose tests) so images and logs never saturate the run session's context.
+2. Every task's binary criteria are checked on evidence — commands run, diffs read, never taken on faith. User sign-off lives only in explicit **gate tasks**: an autonomous run crosses everything else and stops cleanly at the gate.
 3. On failure: one retry → pre-decided Plan B → **the run stops**. No improvisation: a **blockage synthesis** (nature, attempts, evidence, options) is written into the plan; you take it to Fable, paste the directive back, and relaunch — the run resumes exactly there.
-4. Progress, journals and costs live in the plan file — **resume anytime**, survives crashes and compaction.
+4. Progress, journals and costs live in the plan file — **resume anytime**. A run continues through context compaction (full plan re-read) and only ends on blockage, gate, or completion.
 
 ## Commands
 

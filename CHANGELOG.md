@@ -2,6 +2,14 @@
 
 All notable changes to **fablewise** are documented here. Format inspired by [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). The plugin was developed iteratively on 2026-07-02/03 under its working name *plan-runner*, renamed *fablewise* for public release.
 
+## [0.22.0] — 2026-07-03
+
+**Runs that go the distance.** A real 20-task autonomous run stopped after 3 tasks on context saturation (capture-heavy audits executed inline). Three mechanisms so a run only ever stops on blockage, gate, or completion — see D-22.
+
+- **`[contexte: lourd]` tag** (new, set by Fable at design time): tasks with predictable heavy output — multi-capture visual audits, live-system capture sessions, builds, verbose test suites — are ALWAYS delegated by `/plan-run` to a `task-executor`, even solo; images and logs stay out of the run session. Untagged legacy plans: same rule by detection. The former soft "exception" wording did not survive contact with a real run.
+- **Runs continue through compaction**: on saturation, finish the task, write state, keep going (mandatory full plan re-read after compaction, per D-09). "Propose a relaunch" is now only the fallback when the session itself dies — re-entrance unchanged.
+- **User validation lives only in gate tasks**: `/plan` and `/plan-rework` no longer write "validation by the user" as a criterion on regular tasks (machine-checkable criteria + named evidence instead; subjective sign-off batched at explicit gates). `/plan-run` treats legacy mid-plan validation criteria as: constate the technical part, attach evidence, defer to the next gate. Stopping at a gate is a run's normal end, not a failure.
+
 ## [0.21.0] — 2026-07-03
 
 **The inversion.** A measured head-to-head (same request, cold start) showed the multi-agent conception pipeline at $7.13 / 25m19 API vs $0.77 / 91s for direct Fable, with equivalent design quality — the dominant cost being the Sonnet orchestrator relay (56%). Design now runs IN a Fable session; execution stays Sonnet. See D-21 (and the superseded/adapted markers on D-01…D-20).

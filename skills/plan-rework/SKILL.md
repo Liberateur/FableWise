@@ -56,7 +56,7 @@ Comme `/plan` étape 4 : `[projet]` → `plan-explorer`, `[web]` → `general-pu
 
 **Dossier de pièces** (délégué, `model: haiku`) : extraits verbatim des fichiers que les nouveaux plans citeront — signatures, blocs ±10 lignes, ≤ 150 lignes/fichier, copier sans résumer. Ne jamais citer une référence absente des pièces et synthèses : `⚠ à vérifier`.
 
-Rédiger ensuite chaque plan cible au template (`skills/plan/references/plan-template.md`), mêmes exigences que `/plan` étape 6 (tâches regroupées et mâchées pour Sonnet, critères binaires, `[touche:]`, Plans B, pre-mortem, test-first, anti-troncature par passes de 3-4 tâches), plus :
+Rédiger ensuite chaque plan cible au template (`skills/plan/references/plan-template.md`), mêmes exigences que `/plan` étape 6 (tâches regroupées et mâchées pour Sonnet, critères binaires constatables machine — validations utilisateur regroupées aux tâches gate —, `[touche:]`, `[contexte: lourd]` sur les tâches à sortie volumineuse, Plans B, pre-mortem, test-first, anti-troncature par passes de 3-4 tâches), plus :
 
 - En-tête de filiation : `> **Refonte de** : <plans sources> — YYYY-MM-DD`.
 - Une section **Acquis & leçons (condensé d'héritage)** : la seule trace qui survivra aux sources — tâches `✅` condensées (quoi, où, journaux résumés), erreurs investiguées et leurs leçons, décisions passées encore pertinentes. Assez riche pour ne jamais regretter les fichiers supprimés.

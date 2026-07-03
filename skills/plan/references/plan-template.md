@@ -29,14 +29,14 @@ Ce plan est appliqué par une session **Sonnet** (`/plan-run`) qui suit les mode
 
 ### T1 — <titre impératif> `[deps: —]` `[statut: ⬜]`
 
-<!-- Tags : `[touche: chemins/assets exacts + ressources exclusives nommées]` OBLIGATOIRE (base du calcul de parallélisme ; ressource exclusive = tout système n'acceptant pas d'accès concurrents : `editor` pour un éditeur/moteur vivant, `db`, `device`, `dev-server`…) · `[groupe: X]` optionnel (tâches mécaniques cohésives exécutées ensemble) · `[risque: haut]` si Plan B pré-décidé. -->
+<!-- Tags : `[touche: chemins/assets exacts + ressources exclusives nommées]` OBLIGATOIRE (base du calcul de parallélisme ; ressource exclusive = tout système n'acceptant pas d'accès concurrents : `editor` pour un éditeur/moteur vivant, `db`, `device`, `dev-server`…) · `[groupe: X]` optionnel (tâches mécaniques cohésives exécutées ensemble) · `[risque: haut]` si Plan B pré-décidé · `[contexte: lourd]` si sortie volumineuse prévisible (audit visuel multi-captures, session capture d'un système vivant, build, tests verbeux) — /plan-run délègue OBLIGATOIREMENT ces tâches à un exécuteur, même seules. -->
 
 - **Quoi** : <objectif de la tâche en 1-2 lignes>
 - **Méthode** : <méthode retenue par Fable + alternative écartée et pourquoi>
 - **Mode opératoire** : <étapes numérotées, prescriptives, autosuffisantes — chemins/signatures/assets exacts, ordre des opérations, commandes, constat attendu après chaque étape. La réflexion est mâchée ici : l'exécutant applique, il ne re-décide pas. Longueur libre.>
 - **Contexte** : <fichiers concernés avec chemins, contraintes, conventions spécifiques à cette tâche — exécutable sans ré-explorer>
 - **Rendu attendu** : <livrable concret : fichier, fonction, doc, config>
-- **Critères de complétion (1-4, binaires, vérifiables)** : <liste — constat sur pièces, exécutable de préférence (commande/test + résultat attendu) ; si tests d'acceptation figés : « les tests X passent, non modifiés (diff vierge sur les fichiers de test) »>
+- **Critères de complétion (1-4, binaires, vérifiables)** : <liste — constat sur pièces, exécutable de préférence (commande/test + résultat attendu) ; si tests d'acceptation figés : « les tests X passent, non modifiés (diff vierge sur les fichiers de test) ». Jamais de « validation utilisateur » hors tâche gate — les validations visuelles/subjectives vivent dans des tâches gate dédiées, où un run autonome s'arrête proprement.>
 - **Plan B** (seulement si `[risque: haut]`) : <méthode de repli pré-décidée par Fable, en mode opératoire condensé — appliquée après 2 échecs de la méthode principale, sans arrêter le run>
 - **Journal** : <!-- rempli par /plan-run : CHECKPOINT, tentatives, écarts, constats des critères ; Synthèse de blocage le cas échéant -->
 

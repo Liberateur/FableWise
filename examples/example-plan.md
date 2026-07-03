@@ -92,7 +92,7 @@ The plan failed because the sliding-window counter keyed on `req.ip` returned th
   2. `grep -c rateLimit src/routes/public.js` returns 3.
 - **Journal** :
 
-### T4 — End-to-end check `[deps: T3]` `[statut: ⬜]` `[groupe: A]` `[touche: —]`
+### T4 — End-to-end check `[deps: T3]` `[statut: ⬜]` `[groupe: A]` `[touche: —]` `[contexte: lourd]`
 
 - **Quoi** : Prove the wired app limits for real, outside jest.
 - **Mode opératoire** :
