@@ -2,6 +2,17 @@
 
 All notable changes to **fablewise** are documented here. Format inspired by [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). The plugin was developed iteratively on 2026-07-02/03 under its working name *plan-runner*, renamed *fablewise* for public release.
 
+## [0.17.0] — 2026-07-03
+
+Fixes derived from the first two real post-release runs (a lighting /plan and a map-life /plan-rework) — see D-16/D-17 and the amended D-04/D-06/D-12 in `DECISIONS.md`.
+
+- **Tranche-based Opus development** (anti-truncation): beyond 6 skeleton tasks, `plan-developer` is invoked in tranches of ≤4 tasks with an identical verbatim prefix (cache-friendly) and mandatory `FIN DE TRANCHE`/`FIN DU PLAN` end markers; a missing marker re-asks the same tranche, never hand-reassembly. *Observed: a 12-task rework truncated and double-billed Opus (46% of the command).*
+- **Hard delegation interdictions**: the orchestrator never searches the web, probes a live system over MCP (dumps, screenshots), or runs the reference/fidelity gates itself — dedicated agents only; live-MCP inspection gets an explicit `general-purpose` sonnet route (plan-explorer has no MCP tools). *Observed: inline web research paid twice, quarantine bypassed, gate run in-session.*
+- **Actionable Fable-share alert**: when the >35% alert fires, the recap details every Fable call (mission, tokens) and qualifies the cause — leaky brief vs. structurally small command. *Observed: two consecutive alerts (48%, 39%) impossible to diagnose.*
+- **Text-only briefs**: user-attached images are described in the brief (the decision-relevant facts), never forwarded to Fable agents.
+- **Inter-plan ordering**: optional `À exécuter après` plan-header line, enforced by `/plan-run` at load (STOP + explicit GO if the prerequisite plan isn't ✅); `/plan` and `/plan-rework` set it on scope/mutex overlap or logical dependency.
+- Cumulative-cost recap line clarified as never-omitted, including for the `/plan` that just created the file.
+
 ## [0.16.0] — 2026-07-03 — Public release
 
 - **Renamed** plan-runner → **fablewise**; per-project files renamed to `.claude/fablewise-lessons.md` and `.claude/fablewise-notify`.

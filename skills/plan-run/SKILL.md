@@ -33,6 +33,7 @@ Si le fichier `.claude/fablewise-notify` existe dans le projet (contenu : une UR
 
 1. Lire le fichier plan en entier. S'il n'existe pas ou ne suit pas le template : le signaler et s'arrêter. Compatibilité : un plan ancien sans lignes Méthode/Mode opératoire/Plan B reste exécutable — l'exécuteur traite alors Quoi + Contexte comme directive.
 2. Vérifier le statut d'en-tête : si `🟡 en attente de validation`, demander la validation à l'utilisateur avant tout (GATE). Si `✅ terminé`, le dire et s'arrêter.
+   **Ordre inter-plans** : si l'en-tête porte une ligne `À exécuter après : <plan>`, lire le statut de ce plan préalable. S'il n'est pas `✅ terminé` : STOP, l'expliquer (les deux plans partagent des ressources ou un état dont ce plan dépend), et ne continuer que sur GO explicite de l'utilisateur — noter ce GO dans le Journal.
 3. Inventorier les tâches : faites (`✅`), bloquées (`⏸`), restantes (`⬜`/`🔄`), budget d'escalades restant. Une tâche `🔄` orpheline (run précédent interrompu) est retraitée comme `⬜` — le noter dans son Journal.
 4. Passer le statut d'en-tête à `🔄 en cours`. Annoncer brièvement le point de reprise.
 
@@ -96,7 +97,7 @@ Terminer TOUJOURS la réponse par ce tableau (markdown, rendu graphiquement dans
 
 Méthode de calcul (appliquer telle quelle) : coût estimé = tokens × tarif blended par Mtok, hypothèse 80 % input / 20 % output. Blended : fable $18 · opus $9 · sonnet $5.40 · haiku $1.80 (dérivés des tarifs API in/out $ par Mtok : fable 10/50, opus 5/25, sonnet 3/15, haiku 1/5 — tarifs constatés mi-2026, à rafraîchir en cas de doute). « Sans le plugin » = total tokens × $18 (la même volumétrie si Fable avait tout fait lui-même). Omettre les lignes de modèles non utilisés.
 
-Règles d'honnêteté : chiffres bruts, cache non distingué — le facturé réel est plus bas (lectures cache ≈ 10 % du tarif input), annoncer comme majorant. Coordination de session (Sonnet) non incluse, visible via /context. Valeur d'usage manquante = « n/d », jamais inventée. **Si la part fable dépasse ~35 % du coût total, le signaler explicitement : un brief fuit probablement.**
+Règles d'honnêteté : chiffres bruts, cache non distingué — le facturé réel est plus bas (lectures cache ≈ 10 % du tarif input), annoncer comme majorant. Coordination de session (Sonnet) non incluse, visible via /context. Valeur d'usage manquante = « n/d », jamais inventée. **Si la part fable dépasse ~35 % du coût total, le signaler ET détailler chaque appel Fable (mission, tokens)** pour localiser la fuite ; qualifier la cause : brief qui fuit (un appel anormalement gros vs les autres) ou part structurelle (commande courte où les passes Fable obligatoires dominent le dénominateur — le dire tel quel). Une alerte sans détail par appel n'est pas actionnable.
 
 Pour /plan-run : ce tableau complète le Rapport de run écrit dans le fichier plan (qui garde le détail par tâche).
 

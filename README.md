@@ -1,4 +1,4 @@
-# fablewise
+# FableWise
 
 > **Cut your Fable 5 bill by up to ~70%\* — and keep its judgment.**
 
@@ -7,6 +7,16 @@ Claude's frontier model is brilliant and expensive. **fablewise** is a Claude Co
 **Fable decides. Opus details. Sonnet & Haiku execute and verify. You stay in control at every gate.**
 
 \* *Estimate vs. the same token volume run entirely on Fable; shown as an upper-bound cost table after every command.*
+
+## Proof, not promises
+
+Same request, same frozen acceptance tests (written before any run), two sessions: one plain Fable, one fablewise. Every number below comes from a real, reproducible run — see [benchmarks/](benchmarks/) for the protocol and harness.
+
+<!-- fablewise-bench:start -->
+*First measured campaign in progress — run it yourself: `benchmarks/run.sh <case> baseline` then `benchmarks/run.sh <case> fablewise`, and `node benchmarks/gen-table.js` fills this table.*
+<!-- fablewise-bench:end -->
+
+Each cell reads **plain Fable → with fablewise**. Costs on both sides are real usage read from the Claude Code session transcripts, priced identically at API rates (cache discounts included) — no estimates. fablewise wall time includes human approval at the gates.
 
 ## Install
 
@@ -31,11 +41,12 @@ your request
    ├─ FABLE challenges your request         (short, interactive — asks before assuming)
    ├─ Sonnet researches what's missing      (web + project, parallel, quarantined)
    ├─ FABLE decides the skeleton            (methods, model per task, Plan Bs, pre-mortem — dense, short)
-   ├─ Opus expands into playbooks           (step-by-step, executable by a model that never improvises)
+   ├─ Opus expands into playbooks           (step-by-step, in bounded tranches — long plans never truncate)
    ├─ Haiku gate-checks every reference     (anti-hallucination + skeleton fidelity)
    └─ YOU validate the plan                 (nothing runs without your go)
 
 /plan-run  →  Sonnet/Haiku execute task-by-task
+   ├─ inter-plan ordering enforced (À exécuter après header)
    ├─ scope-based parallelism ([touche:] tags, exclusive-resource mutexes)
    ├─ independent per-criterion verification (never self-graded)
    ├─ failure ladder: retry → pre-decided Plan B → Fable arbitration (budgeted)
@@ -54,9 +65,9 @@ your request
 ## Why it saves money
 
 - The **orchestrating session runs on Sonnet** — the most expensive seat in any agent loop is the orchestrator, so it's the cheapest capable model.
-- **Fable's output is capped at judgment**: skeletons, decisions, arbitrations. Never code, never long documents. A completeness loop lets it request missing info instead of writing plans on guesses.
+- **Fable's output is capped at judgment**: skeletons, decisions, arbitrations. Never code, never long documents. Briefs are compressed text only (images are described, never forwarded). A completeness loop lets it request missing info instead of writing plans on guesses.
 - **Long output is billed at Opus rates**, mechanical work and verification at Haiku rates.
-- Every command ends with a **cost table** — per-model tokens, estimated cost, and what the same volume would have cost all-Fable. Each plan file carries its **cumulative lifetime cost**.
+- Every command ends with a **cost table** — per-model tokens, estimated cost, and what the same volume would have cost all-Fable. When the Fable share exceeds ~35%, the recap breaks it down per Fable call to locate the leak. Each plan file carries its **cumulative lifetime cost**.
 
 ## Why quality goes *up*, not down
 
@@ -65,6 +76,7 @@ your request
 - **Anchored edits**: executors quote the exact lines before changing them; a missing anchor is a reported block, never a guess.
 - **Pre-mortem & Plan B**: the architect writes the fictional incident report of the plan's failure and pre-decides fallbacks — course changes are designed by the strongest model *before* the run, not improvised mid-run by the weakest.
 - **Prompt-injection quarantine**: web researchers are read-only and return typed summaries; file content is data, never instructions.
+- **Hard delegation**: the orchestrator never searches the web, probes a live editor/engine over MCP, or gate-checks references itself — those always run in dedicated agents, keeping the quarantine intact, the session context lean, and the verdicts independent.
 - Designed against the three failure modes Anthropic names: *agentic laziness* (copied checklists, no "I'll handle the rest"), *self-preferential bias* (verifier ≠ executor, pairwise verdicts), *goal drift* (the plan file on disk is the only memory that survives compaction).
 
 ## Requirements & notes

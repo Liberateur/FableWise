@@ -16,7 +16,7 @@ Fable decides methods, model assignments, dependencies, Plan Bs; Opus expands ea
 
 ## D-04 — Toolless premium agents + compressed briefs
 
-The fable-model agents have no tools and never read files: everything arrives via a compressed brief (verbatim identifiers preserved, prose stripped, ≤800 words). Reason: with Read/Glob they self-served raw files at premium input rates, and briefs are the only enforceable cost boundary. *Evidence: an observed 93k-token rework where the architect explored freely.*
+The fable-model agents have no tools and never read files: everything arrives via a compressed brief (verbatim identifiers preserved, prose stripped, ≤800 words). Reason: with Read/Glob they self-served raw files at premium input rates, and briefs are the only enforceable cost boundary. Briefs are text-only: visual references (user-attached images, screenshots) are described in the brief — the decision-relevant fact, not the aesthetics — never forwarded as images; the brief rules previously said nothing about images, leaving it to improvisation. *Evidence: an observed 93k-token rework where the architect explored freely; a lighting /plan with three reference images whose two Fable passes totalled 81k tokens.*
 
 ## D-05 — Completeness loop instead of best-effort plans
 
@@ -24,7 +24,7 @@ The architect returns either a skeleton or a typed `MANQUES:` list ([projet]/[we
 
 ## D-06 — No worktrees; scope tags + exclusive-resource mutexes
 
-Parallelism is computed mechanically from mandatory `[touche:]` tags (empty intersection = parallel); named exclusive resources (`editor`, `db`, `device`) are global mutexes; `isolation: worktree` is banned. Reasons: target projects often have a live editor/engine/server attached to the working folder (a git copy can't compile or test), and LLMs resolve <60% of real merge conflicts — avoid conflicts by scoping, don't repair them by merging. *Evidence: Merge-Bench (ICPR 2026); CAID ablations; engine editors execute tool calls serially per vendor docs.*
+Parallelism is computed mechanically from mandatory `[touche:]` tags (empty intersection = parallel); named exclusive resources (`editor`, `db`, `device`) are global mutexes; `isolation: worktree` is banned. Reasons: target projects often have a live editor/engine/server attached to the working folder (a git copy can't compile or test), and LLMs resolve <60% of real merge conflicts — avoid conflicts by scoping, don't repair them by merging. Cross-*plan* conflicts (two plans sharing `editor` or a visual/technical state one of them tunes) are declared via an optional `À exécuter après` header line, enforced by /plan-run at load (STOP + explicit GO if the prerequisite plan isn't ✅). *Evidence: Merge-Bench (ICPR 2026); CAID ablations; engine editors execute tool calls serially per vendor docs; two same-day plans both touching the same map and the `editor` mutex, one tuning lighting against materials the other was about to fix.*
 
 ## D-07 — Independent, per-criterion, rationale-first verification
 
@@ -48,7 +48,7 @@ Executors must quote the exact lines before modifying them (missing anchor = rep
 
 ## D-12 — Honest cost accounting, upper bound only
 
-The recap table uses documented blended rates (80/20 in/out assumption), never invents cache ratios, marks missing usage as "n/d", counts subagents only (session coordination visible via /context), and flags a >35% Fable share as a leaky-brief signal (exempted for /plan-prompt where Fable is structurally dominant). Cumulative cost lives in the plan header (D-09). Estimates presented as measurements destroy trust in the whole recap.
+The recap table uses documented blended rates (80/20 in/out assumption), never invents cache ratios, marks missing usage as "n/d", counts subagents only (session coordination visible via /context), and flags a >35% Fable share as a leaky-brief signal (exempted for /plan-prompt where Fable is structurally dominant). When the alert fires, the recap must break the Fable cost down per call (mission, tokens) and qualify the cause — leaky brief vs. structurally small command where two mandatory Fable passes dominate a small denominator — otherwise the alert is unactionable noise. Cumulative cost lives in the plan header (D-09). Estimates presented as measurements destroy trust in the whole recap. *Evidence: two consecutive runs both above threshold (48%, 39%) with no way to tell which brief leaked.*
 
 ## D-13 — Granularity floor, grouping, cache-friendly dispatch
 
@@ -61,3 +61,11 @@ The plugin was built and battle-tested in French. Instructions work regardless (
 ## D-15 — The repo is the marketplace
 
 `.claude-plugin/marketplace.json` in-tree; users add `Liberateur/FableWise` and sync updates from tags. No GitHub releases to maintain, no packaged artifacts in the tree (`*.plugin` is gitignored). Version = tag = changelog is the whole release process.
+
+## D-16 — Opus develops long plans in bounded tranches
+
+Single-response plan development collides with the per-response output limit: beyond ~6 skeleton tasks, the plan truncates mid-task and the recovery costs a full second Opus pass. `plan-developer` is invoked in tranches of ≤4 tasks, every call carrying the same verbatim prefix (skeleton + brief + template) with the tranche instruction at the tail — identical prefix means the subagent cache absorbs the repeated input (D-13). Every response must end with a `FIN DE TRANCHE` / `FIN DU PLAN` marker; a missing marker means truncation and the same tranche is re-asked — never hand-reassembled by the orchestrator. *Evidence: a 12-task rework plan truncated mid-development; the recovery double-billed Opus (2 calls, 202k tokens, 46% of the command's cost) and pushed the orchestrator to improvise a direct-write workaround outside the developer's contract.*
+
+## D-17 — The orchestrator never self-serves delegated steps (hard interdictions)
+
+Web search, live-system MCP inspection (editor/engine dumps, screenshots) and gate greps always run in dedicated agents, even when inline looks faster. Three reasons: inline web bypasses the injection quarantine (D-11), inline MCP dumps and screenshots bloat the session context for the rest of the command (against D-01's economics), inline gating breaks verdict independence (D-07). The skills state these as hard interdictions — soft prescriptions ("lancer un agent…") proved insufficient: the orchestrator complies when convenient and improvises when a prescribed agent lacks the needed tools (plan-explorer has no MCP tools). *Evidence: a rework run where the orchestrator searched the web directly AND paid a delegated agent for the same research, ran the reference gate itself (no haiku line in its own recap), and pulled five editor screenshots into session context.*

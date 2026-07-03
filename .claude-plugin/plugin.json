@@ -1,6 +1,6 @@
 {
   "name": "fablewise",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "Orchestration multi-modèles pilotée par le coût : Fable conçoit, challenge et arbitre ; Sonnet/Haiku exécutent et vérifient. Quatre commandes : /plan (concevoir un plan validé), /plan-run (l'exécuter tâche par tâche avec vérification, escalade et suivi de progression), /plan-rework (fusionner d'anciens plans, rechallenger leurs demandes, refondre l'ensemble), /plan-prompt (un prompt optimal + le modèle recommandé pour une tâche unique).",
   "author": {
     "name": "Cédric"

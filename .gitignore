@@ -18,3 +18,6 @@ desktop.ini
 # Local/user state (never commit project-specific runtime files)
 .claude/fablewise-lessons.md
 .claude/fablewise-notify
+
+# Benchmark working copies (results/ IS versioned — it backs the README table)
+benchmarks/runs/
