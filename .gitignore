@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+.AppleDouble
+._*
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Editors
+.idea/
+.vscode/
+*.swp
+
+# Packaged plugin artifacts (built from source, not versioned)
+*.plugin
+
+# Local/user state (never commit project-specific runtime files)
+.claude/fablewise-lessons.md
+.claude/fablewise-notify

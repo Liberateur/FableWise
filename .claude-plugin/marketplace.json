@@ -1,0 +1,13 @@
+{
+  "name": "fablewise",
+  "owner": {
+    "name": "Cédric"
+  },
+  "plugins": [
+    {
+      "name": "fablewise",
+      "source": "./",
+      "description": "Cut your Fable 5 bill — keep its judgment. The premium model decides plans and arbitrates failures; Opus writes the playbooks; Sonnet/Haiku execute and verify every task."
+    }
+  ]
+}
