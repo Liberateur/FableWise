@@ -5,7 +5,7 @@
 > **Énoncé consolidé** : <demande après rechallenge Fable et arbitrages utilisateur>
 > **Créé** : YYYY-MM-DD · **Budget escalades Fable** : 5 · **Consommées** : 0
 > **À exécuter après** : <chemin d'un plan préalable — ligne optionnelle ; si présente, /plan-run exige son statut ✅ terminé ou un GO explicite de l'utilisateur>
-> **Conso cumulée (estimée, majorant)** : conception ${n} · runs ${n} ({n} runs) · **total ${n}** <!-- mise à jour par chaque commande fablewise touchant ce plan -->
+> **Conso cumulée (volumétrie hors cache)** : conception ${n} · runs ${n} ({n} runs) · **total ${n}** · **dont Fable {n}k tokens** <!-- mise à jour par chaque commande fablewise touchant ce plan ; « dont Fable » = tokens in+out Fable cumulés, la ressource contingentée -->
 
 ## Contexte
 
@@ -46,4 +46,4 @@ Pour chaque tâche : exécution → vérification contre le critère → si éch
 
 ## Rapport de run
 
-<!-- Rempli par /plan-run à chaque fin d'exécution : date, tâches faites/bloquées, escalades consommées, tokens par tâche, écarts notables, reste à faire. -->
+<!-- Rempli par /plan-run à chaque fin d'exécution : date, tâches faites/bloquées, escalades consommées, tokens par tâche, écarts notables, reste à faire, taux par modèle (tâches, PASS 1er coup, retries, Plans B, escalades — la base des réassignations futures). -->

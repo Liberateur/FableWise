@@ -23,7 +23,7 @@ Au lancement (juste après le garde-fou) : si le projet a un dossier `.claude/`,
 
 Alimentation en fin de commande : si des leçons généralisables ont émergé (erreurs récurrentes, réassignations, pièges), les PROPOSER à l'utilisateur (une ligne chacune) — n'écrire dans le fichier qu'après son GO explicite. Écriture sous `.claude/` : si Write échoue (« protected location »), passer par bash (`cat >>`).
 
-Pour /plan-run : inclure les leçons pertinentes dans les briefs d'escalade `fable-advisor`, et proposer les nouvelles leçons dans le résumé de fin de run.
+Pour /plan-run : inclure les leçons pertinentes dans les briefs d'escalade `fable-advisor`, et proposer les nouvelles leçons dans le résumé de fin de run — dont les **réassignations de modèle appuyées par les taux du Rapport de run** (ex. « les tâches d'authoring scripté échouent en sonnet → opus », « les purges mécaniques passent en haiku du premier coup → haiku par défaut »). Ces leçons remontent dans les briefs architecte des prochains /plan : les assignations s'ajustent sur les données du projet, pas sur la doctrine.
 
 ## Notifications (opt-in)
 
@@ -60,8 +60,8 @@ Conditions : 2 échecs de vérification, rapport de blocage, ou choix non couver
 2. **Brief synthétique** (c'est lui qui contrôle le coût — le rédiger court et complet) : tâche concernée (section du plan), erreur/choix formulé en 3 lignes, historique des tentatives (quoi, résultat), extraits strictement nécessaires (diff, message d'erreur — pas de logs entiers), options envisagées.
 3. Lancer l'agent `fable-advisor` (sinon `general-purpose` avec `model: fable`). L'advisor n'utilise aucun outil : tout ce qu'il doit savoir est dans le brief — y inclure les **points critiques et le Plan B de la tâche** (déjà tentés ou non) et les leçons projet pertinentes. Sa réponse est de l'un de ces trois types :
    - `DIRECTIVE:` — décision + justification 3 lignes + étapes concrètes → relancer l'exécuteur avec, puis vérification normale.
-   - `INVESTIGUER:` — UNE question précise typée `[projet]` ou `[web]` qu'il lui faut avant de trancher → l'orchestrateur la fait chercher par Sonnet, complète le brief, relance l'advisor. Un seul aller-retour, le tout compte pour UNE escalade.
-   - `REDÉCOUPER:` — la tâche est mal conçue ; il rend un mini-squelette de remplacement (1-N tâches : titre, objectif, méthode, modèle, deps, critère). L'orchestrateur fait développer les modes opératoires par `plan-developer` (opus), passe les nouvelles tâches au gate anti-hallucination (vérifieur haiku, références réelles), puis remplace la tâche dans le plan : l'originale passe `❌` avec renvoi, les remplaçantes sont numérotées `T<n>.1`, `T<n>.2`… (jamais de renumérotation globale — les journaux et commits passés y font référence). La boucle reprend — c'est le changement de cap formalisé, tracé dans le plan.
+   - `INVESTIGUER:` — UNE question précise typée `[projet]` ou `[web]` qu'il lui faut avant de trancher → l'orchestrateur la fait chercher par Sonnet, puis répond **en CONTINUATION de la même conversation advisor** (la réponse seule, jamais le brief re-envoyé — relance complète seulement si continuation indisponible). Un seul aller-retour, le tout compte pour UNE escalade.
+   - `REDÉCOUPER:` — la tâche est mal conçue ; il rend un mini-squelette de remplacement (1-N tâches : titre, objectif, méthode, modèle, deps, critère). L'orchestrateur fait développer les modes opératoires par `plan-developer` (opus — pour 1-N tâches de remplacement, le rendu en chat est acceptable), passe les nouvelles tâches au gate anti-hallucination (vérifieur haiku, références réelles, vérification en UNE passe scriptée), puis remplace la tâche dans le plan : l'originale passe `❌` avec renvoi, les remplaçantes sont numérotées `T<n>.1`, `T<n>.2`… (jamais de renumérotation globale — les journaux et commits passés y font référence). La boucle reprend — c'est le changement de cap formalisé, tracé dans le plan.
 4. **Application** : selon le type ci-dessus. Toute modification du plan (REDÉCOUPER) est notée dans le Journal et visible dans le Rapport de run.
 5. **Échec persistant** : marquer `[statut: ⏸]`, archiver le brief + la directive dans le Journal de la tâche, et **enchaîner** sur la prochaine tâche prête non dépendante. Les tâches dépendantes d'une `⏸` sont gelées, pas abandonnées.
 
@@ -70,7 +70,7 @@ Conditions : 2 échecs de vérification, rapport de blocage, ou choix non couver
 Quand plus aucune tâche n'est prête (tout `✅`, ou restantes gelées/bloquées) :
 
 1. Statut d'en-tête : `✅ terminé` si tout est fait, sinon `🔄 en cours` (reprise possible) ou `🔴 interrompu` (budget épuisé / stop).
-2. Remplir la section **Rapport de run** du fichier plan : date, tâches faites / bloquées / gelées, escalades consommées (et sur quoi), total tokens par tâche et par modèle, écarts notables, reste à faire.
+2. Remplir la section **Rapport de run** du fichier plan : date, tâches faites / bloquées / gelées, escalades consommées (et sur quoi), total tokens par tâche et par modèle, écarts notables, reste à faire — et les **taux par modèle** : pour chaque modèle assigné (haiku/sonnet/opus), nombre de tâches, PASS du premier coup, retries, Plans B appliqués, escalades. C'est la donnée qui permet d'ajuster les assignations sur des faits : un modèle qui passe tout du premier coup est peut-être surdimensionné, un modèle qui escalade coûte du Fable.
 3. Présenter à l'utilisateur un résumé court : l'essentiel du rapport + les tâches `⏸` avec leur brief (ce sont ses décisions à prendre) + la commande de reprise si pertinent.
 
 ## Règles transverses
@@ -82,9 +82,9 @@ Quand plus aucune tâche n'est prête (tout `✅`, ou restantes gelées/bloquée
 
 ## Récap de consommation (obligatoire, dernière action de la commande)
 
-Terminer TOUJOURS la réponse par ce tableau (markdown, rendu graphiquement dans le chat), en additionnant les `subagent_tokens` retournés par chaque appel d'agent :
+Terminer TOUJOURS la réponse par ce tableau (markdown, rendu graphiquement dans le chat), en additionnant les `subagent_tokens` retournés par chaque appel d'agent — c'est une **volumétrie HORS CACHE** (l'outil Agent ne remonte pas les tokens de cache) :
 
-| Modèle | Appels | Tokens | Coût estimé |
+| Modèle | Appels | Tokens (hors cache) | Coût indicatif |
 |---|---|---|---|
 | fable | {n} | {n}k | ${n} |
 | opus | {n} | {n}k | ${n} |
@@ -94,12 +94,24 @@ Terminer TOUJOURS la réponse par ce tableau (markdown, rendu graphiquement dans
 
 > **Sans le plugin (tout-Fable) : ~${n} — économie estimée ~{n} %**
 > `{barre : █ proportionnel à l'économie, sur 10 caractères, ex. ███████░░░ pour 70 %}`
+> **Fable : {n} appel(s) · {n}k in · {n}k out** ← la métrique pilotée (escalades)
+
+**KPI Fable** : cette dernière ligne est TOUJOURS affichée (0 appel = l'écrire aussi, c'est la bonne nouvelle) — l'objectif premier du plugin est de minimiser la consommation Fable ABSOLUE ; l'alerte >35 % ne sert que de détecteur de fuite.
 
 Méthode de calcul (appliquer telle quelle) : coût estimé = tokens × tarif blended par Mtok, hypothèse 80 % input / 20 % output. Blended : fable $18 · opus $9 · sonnet $5.40 · haiku $1.80 (dérivés des tarifs API in/out $ par Mtok : fable 10/50, opus 5/25, sonnet 3/15, haiku 1/5 — tarifs constatés mi-2026, à rafraîchir en cas de doute). « Sans le plugin » = total tokens × $18 (la même volumétrie si Fable avait tout fait lui-même). Omettre les lignes de modèles non utilisés.
 
-Règles d'honnêteté : chiffres bruts, cache non distingué — le facturé réel est plus bas (lectures cache ≈ 10 % du tarif input), annoncer comme majorant. Coordination de session (Sonnet) non incluse, visible via /context. Valeur d'usage manquante = « n/d », jamais inventée. **Si la part fable dépasse ~35 % du coût total, le signaler ET détailler chaque appel Fable (mission, tokens)** pour localiser la fuite ; qualifier la cause : brief qui fuit (un appel anormalement gros vs les autres) ou part structurelle (commande courte où les passes Fable obligatoires dominent le dénominateur — le dire tel quel). Une alerte sans détail par appel n'est pas actionnable.
+Règles d'honnêteté : ce tableau est une volumétrie hors cache — le trafic réel (écritures de cache à 1,25× le tarif input, lectures à 10 %) est typiquement **plusieurs fois supérieur** (×4-5 observé sur des runs mesurés). Ne JAMAIS le présenter comme un majorant ni comme le facturé. Le comparatif « sans le plugin » utilise la même base hors cache : il compare des volumétries, pas des factures. Coordination de session (Sonnet) non incluse, visible via /context. Valeur d'usage manquante = « n/d », jamais inventée. **Si la part fable dépasse ~35 % du coût total, le signaler ET détailler chaque appel Fable (mission, tokens)** pour localiser la fuite ; qualifier la cause : brief qui fuit (un appel anormalement gros vs les autres) ou part structurelle (commande courte où les passes Fable obligatoires dominent le dénominateur — le dire tel quel). Une alerte sans détail par appel n'est pas actionnable.
+
+**Coût réel (cache inclus) — best effort** : si l'environnement le permet (CLI Claude Code, `jq` présent), calculer le coût réel de la session depuis son transcript et l'afficher sous le tableau (`Coût réel cache inclus : $n (transcript)`), sinon afficher `Coût réel : n/d (transcript non accessible)`. Commande (le transcript courant = le `.jsonl` le plus récent du projet ; inclure les sous-agents) :
+
+```bash
+D=~/.claude/projects/$(pwd | tr '/' '-'); S=$(ls -t "$D"/*.jsonl 2>/dev/null | head -1)
+cat "$S" "${S%.jsonl}/subagents/"*.jsonl 2>/dev/null | jq -r 'select(.type=="assistant" and .message.usage!=null) | [.message.model, .message.usage.input_tokens//0, .message.usage.cache_creation_input_tokens//0, .message.usage.cache_read_input_tokens//0, .message.usage.output_tokens//0] | @tsv' | awk -F'\t' '{i[$1]+=$2;cw[$1]+=$3;cr[$1]+=$4;o[$1]+=$5} END{split("fable:10 opus:5 sonnet:3 haiku:1",T," "); for(m in i){r=3; for(t in T){split(T[t],p,":"); if(index(m,p[1]))r=p[2]}; c=(i[m]*r+cw[m]*r*1.25+cr[m]*r*0.10+o[m]*r*5)/1e6; printf "%s $%.2f\n",m,c; tot+=c} printf "TOTAL $%.2f\n",tot}'
+```
+
+(Tarifs in $/MTok fable 10, opus 5, sonnet 3, haiku 1 ; out = 5× in ; cache write = 1,25× in ; cache read = 0,10× in — constatés mi-2026, à rafraîchir en cas de doute.)
 
 Pour /plan-run : ce tableau complète le Rapport de run écrit dans le fichier plan (qui garde le détail par tâche).
 
 
-**Cumul par plan (sans fichier annexe)** : le fichier plan porte la ligne « Conso cumulée » dans son en-tête. En fin de commande, y additionner le coût estimé de cette commande (champ conception pour /plan et /plan-rework, champ runs pour /plan-run), puis afficher dans le récap la ligne : `Cumul de ce plan : conception $n · runs $n · total $n`. Le plan est le seul support de persistance — aucun registre ni fichier annexe. Un plan ancien sans cette ligne d'en-tête : l'ajouter à la première commande qui le touche.
+**Cumul par plan (sans fichier annexe)** : le fichier plan porte la ligne « Conso cumulée » dans son en-tête. En fin de commande, y additionner le coût estimé de cette commande (champ conception pour /plan et /plan-rework, champ runs pour /plan-run), puis afficher dans le récap la ligne : `Cumul de ce plan : conception $n · runs $n · total $n · dont Fable {n}k tokens`. Le champ « dont Fable » cumule les tokens Fable (in+out) de toutes les commandes ayant touché ce plan — c'est le compteur de la ressource contingentée. Le plan est le seul support de persistance — aucun registre ni fichier annexe. Un plan ancien sans cette ligne d'en-tête : l'ajouter à la première commande qui le touche.

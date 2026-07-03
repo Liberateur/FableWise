@@ -14,14 +14,14 @@ Include:
 ## Proposing a change (PR)
 
 - **The four-layer rule** — any pipeline change must propagate to every layer it touches: `skills/*/SKILL.md` (the workflows), `agents/*.md` (the system prompts), `skills/plan/references/plan-template.md` (the artifact format), `README.md`. Most historical bugs in this project were desynchronizations between these layers.
-- **Cost first**: fablewise exists to spend premium tokens only on judgment. Any change that sends more raw content to the `fable`-model agents, gives them tools, or lengthens their required output needs a strong justification.
+- **Cost first**: the steering metric is **absolute Fable tokens** (see D-19/D-20). Any change that adds a Fable invocation, sends more raw content to the `fable`-model agents, gives them tools, or lengthens their required output needs a strong justification. Subagent tool-call budgets (D-18) are part of the contract too.
 - **Quality gates are not negotiable**: independent verification, frozen tests, anchored edits, user gates before execution/deletion. PRs weakening them for speed will be declined — see README "Why quality goes up".
 - Keep skills self-contained (each SKILL.md must work alone), imperative, and lean.
 - Update `CHANGELOG.md` and bump `plugin.json` version (semver). Version, git tag and changelog entry must match.
 
 ## Testing
 
-No automated harness yet (top roadmap item, via skill-creator evals). Minimum manual checks for a PR: the model guard blocks from a Fable/Opus session; `/plan` on a small real request produces a template-conformant plan with `[touche:]` tags and per-task criteria; the anti-hallucination gate catches a planted fake path.
+Cost measurement harness: `benchmarks/` (baseline-vs-fablewise protocol, `bench-report.sh` prices sessions cache-inclusive from transcripts). No behavioral eval suite yet (top roadmap item, via skill-creator evals). Minimum manual checks for a PR: the model guard blocks from a Fable/Opus session; `/plan` on a small real request produces a template-conformant plan with `[touche:]` tags and per-task criteria (and a single Fable pass when the request is clean); the anti-hallucination gate catches a planted fake path.
 
 ## Roadmap (help wanted)
 

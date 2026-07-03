@@ -2,6 +2,39 @@
 
 All notable changes to **fablewise** are documented here. Format inspired by [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). The plugin was developed iteratively on 2026-07-02/03 under its working name *plan-runner*, renamed *fablewise* for public release.
 
+## [0.20.0] — 2026-07-03
+
+Architect flexibility + small-model push, driven by field feedback (Fable understood Unreal requests far better than Opus — so Fable leads by default, and "Opus builds, Fable signs off" becomes a knob pair, not a doctrine change). See D-20.
+
+- **`--architecte=opus` knob** (/plan, /plan-rework): same missions and contracts on a non-frontier architect for routine plans — zero conception Fable; the recap notes it.
+- **`--validation-fable` knob**: after the gates, Fable validates a **digest** of the developed plan (statement + decisions + condensed task list + gate deviations — never the operating procedures) and answers `GO` or numbered `OBJECTIONS:`, routed like `INCOHÉRENCES:`. One pass, no loop. Recommended with `--architecte=opus`.
+- **Evidence pack on haiku** (mechanical verbatim extraction — copy, never summarize).
+- **Empirical model assignments**: run reports now record per-model rates (tasks, first-pass PASS, retries, Plan Bs, escalations); lessons propose rate-backed reassignments that flow into future architect briefs.
+- **Skill slimming**: measurement evidence moved to `DECISIONS.md` (D-18 pointers); rules stay, proofs don't ride in every session's context.
+- **Frictionless by default**: the upfront Fable phase is *understanding first, challenge second* — questions asked only when a real comprehension doubt or structuring choice exists (never for comfort); the final validation gate is removed — `/plan` and `/plan-rework` run end-to-end and write plans `🟢 validé` (the `🟡` status remains for explicitly requested reviews; the deletion gate in `/plan-rework` is untouched). The `/plan`↔`/plan-run` separation is the safety: nothing executes until the user launches the run.
+
+## [0.19.0] — 2026-07-03
+
+Fable-frugality pass: the steering metric becomes **absolute Fable tokens** (the quota-capped resource), after transcript measurement showed each Fable invocation carries ~30k harness tokens around a ≤1k-word brief (129k Fable context for 15.6k of judgment on one conception). See D-19 and amended D-02/D-12.
+
+- **Single-pass contract**: the architect chains the skeleton into the rechallenge response when it raises no question and no gap — one Fable invocation instead of two on clean requests; the user GATE then validates both together.
+- **Continuation, never relaunch**: post-GATE skeleton, completeness-loop answers and the advisor's INVESTIGUER answer are sent as deltas into the same Fable conversation; full relaunch only when the harness lacks continuation.
+- **Invocation dedup**: skills no longer recopy mission texts that live in the agents' system prompts; the `general-purpose` fallback inlines `agents/plan-architect.md` itself.
+- **Output discipline (hard)**: Fable agents never recopy or paraphrase the brief — reference, don't redefine.
+- **Fable KPI**: every recap ends with `Fable : n appels · nk in · nk out` (even at 0); plan headers cumulate lifetime Fable tokens (`dont Fable`), header label fixed to "volumétrie hors cache".
+- Projected on the measured conception: ~129k → ~55-70k Fable tokens, judgment unchanged. Orchestrator stays Sonnet by measurement (the seat processed 6.1M tokens — 47× Fable's).
+
+## [0.18.0] — 2026-07-03
+
+Performance pass driven by transcript-level measurement of a real conception run (cache-inclusive, API rates: $23.61 real vs $5.04 shown by the recap; baseline plain-Fable $8.77) — see D-12/D-16 amended and D-18 in `DECISIONS.md`.
+
+- **Evidence pack (dossier de pièces)**: after the skeleton, a Sonnet agent extracts verbatim excerpts (signatures, blocks to modify) of every file the skeleton cites; `plan-developer` works from it, capped at **10 reads per tranche**, reporting `PIÈCE MANQUANTE` instead of hunting. *Measured without it: 87 Opus self-exploration calls, $8.95 — the command's largest cost.*
+- **Tranche files, not chat tranches**: `plan-developer` gets Write (restricted to `<plan>.tranche-N.md`) and writes each tranche to disk with the end marker as last line; the orchestrator assembles with `cat` and never carries plan text in its context. Continuation ("SUITE : T4–T7") preferred over relaunch. *Measured: 218k orchestrator output tokens re-emitting the plan (48.5k for the final Write alone).*
+- **Fail-fast tool probe**: agents that need MCP tools verify them in ONE call and return ÉCHEC OUTILS immediately if absent; the orchestrator doesn't relaunch and defers to a run-time T0. *Measured: 13 wandering calls, $1.18 for nothing.*
+- **Web fetch cap**: `[web]` researchers are limited to 4 fetches/searches then synthesize. *Measured: 18 calls for one question.*
+- **Batched gates**: the haiku verifier extracts all references first and checks them in one scripted pass. *Measured: 42 round-trips.*
+- **Honest recap, measured cost**: the token table is now labeled non-cache volumetry (never "upper bound" — real traffic measured at 4-5× that figure); when the session transcript is reachable (Claude Code CLI + jq), the recap adds the real cache-inclusive cost per model. `benchmarks/bench-report.sh` prices runs at the same API rates.
+
 ## [0.17.0] — 2026-07-03
 
 Fixes derived from the first two real post-release runs (a lighting /plan and a map-life /plan-rework) — see D-16/D-17 and the amended D-04/D-06/D-12 in `DECISIONS.md`.

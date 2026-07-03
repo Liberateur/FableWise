@@ -24,7 +24,7 @@ Cost:
 
 Quality:
 - Verification is independent (verifier ≠ executor), per-criterion, rationale-before-verdict, `UNKNOWN` ≠ pass.
-- Frozen acceptance tests are untouchable; anchored edits (quote before modify); user gates before execution and before any deletion.
+- Frozen acceptance tests are untouchable; anchored edits (quote before modify). Execution is user-launched by construction (/plan never runs anything; /plan-run is a separate, deliberate command) and any deletion is user-gated; interactive questions happen only when comprehension genuinely requires them — commands otherwise run end-to-end without approval steps.
 - The plan file on disk is the single source of truth: re-entrant, updated after every task, fully re-read after any context compaction. No side registries.
 
 ## Release discipline

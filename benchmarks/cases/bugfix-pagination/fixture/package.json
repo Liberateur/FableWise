@@ -1,7 +1,0 @@
-{
-	"name": "items-api",
-	"private": true,
-	"scripts": {
-		"start": "node server.js"
-	}
-}
