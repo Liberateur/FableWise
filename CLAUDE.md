@@ -15,6 +15,8 @@ Any pipeline change MUST propagate to every layer it touches, in the same commit
 
 Nearly every historical bug in this project was a desynchronization between these layers (an agent keeping an outdated enumeration that its skill had moved past, a template missing a field a skill referenced). After any change, grep the changed concept across all four.
 
+Since v0.23 two more surfaces exist and must be checked when a change touches run semantics: `scripts/` (external completion loop — parses the plan header status) and `hooks/` (Stop hook — same parsing, plus the `.claude/fablewise-autorun` exit contract in `/plan-run`).
+
 ## Non-negotiable invariants
 
 Cost (v0.21 seat assignment — see D-21):
@@ -28,6 +30,12 @@ Quality:
 - Frozen acceptance tests are untouchable; anchored edits (quote before modify). Execution is user-launched by construction (/plan never runs anything; /plan-run is a separate, deliberate command) and any deletion is user-gated; interactive questions happen only when comprehension genuinely requires them — commands otherwise run end-to-end without approval steps.
 - The plan file on disk is the single source of truth: re-entrant, updated after every task, fully re-read after any context compaction. No side registries.
 
+Autonomy (v0.22–0.25 — see D-22…D-25):
+- A run stops ONLY on blockage, gate, or completion — never on context saturation (compaction is crossed; heavy `[contexte: lourd]` tasks are ALWAYS delegated, detection covers untagged ones and writes the tag back into the plan).
+- User validation is never a criterion on a regular task — machine-checkable evidence + Journal; subjective sign-off lives in gate tasks, where an autonomous run stops cleanly (that's a success).
+- The external loop (`scripts/fablewise-loop.sh`, Cowork scheduled tasks) and the Stop hook (`.claude/fablewise-autorun`) relaunch/hold sessions but NEVER cross a blockage or a gate. The flag file is deleted only at a legitimate stop — that contract lives in `/plan-run` and must match the hook.
+- Runs stay on Sonnet: Sonnet 5 and Opus 4.8 share the same 1M context window (verified 2026-07-03) — a premium seat buys zero autonomy headroom (D-25).
+
 ## Release discipline
 
 `plugin.json` version == git tag == `CHANGELOG.md` entry, in the same commit. Semver: prompts-only fixes = patch, new behavior = minor, breaking plan-format changes = major. No GitHub releases to maintain — users sync from the marketplace.
@@ -38,6 +46,8 @@ Quality:
 2. `/plan` (Fable session) on a small real request → plan conforms to the template (tags `[touche:]`, per-task binary criteria, Méthode line, Contrat d'exécution, pre-mortem), no project file read in session (all delegated), and ends with the real-cost recap + "new Sonnet session" reminder.
 3. Anti-hallucination gate: a planted fake path in a plan draft must be flagged `⚠ à vérifier`, not silently written.
 4. Stop-and-synthesize: a task with an unfindable anchor must produce a `Synthèse de blocage` in the plan and stop the run — never an improvised edit.
+5. Stop hook, three cases (pipe empty stdin to `hooks/fablewise-stop.sh` in a scratch dir): no `.claude/fablewise-autorun` → exit 0 silent; flag + plan `🔄` → valid JSON `{"decision":"block",…}`; flag + plan `✅`/`🔴` → exit 0 silent.
+6. Loop script: `bash -n scripts/fablewise-loop.sh` passes; a plan already `✅` exits 0 on the first iteration without spawning a session… (requires the CLI; at minimum check the status parsing against the template's Statut line).
 Roadmap: automate these via skill-creator evals.
 
 ## Style
