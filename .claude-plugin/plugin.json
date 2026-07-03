@@ -1,10 +1,10 @@
 {
   "name": "fablewise",
-  "version": "0.20.0",
-  "description": "Orchestration multi-modèles pilotée par le coût : Fable conçoit, challenge et arbitre ; Sonnet/Haiku exécutent et vérifient. Quatre commandes : /plan (concevoir un plan validé), /plan-run (l'exécuter tâche par tâche avec vérification, escalade et suivi de progression), /plan-rework (fusionner d'anciens plans, rechallenger leurs demandes, refondre l'ensemble), /plan-prompt (un prompt optimal + le modèle recommandé pour une tâche unique).",
+  "version": "0.21.0",
+  "description": "Fable conçoit, Sonnet applique : /plan, /plan-rework et /plan-prompt tournent en session Fable (exploration, recherches et inventaires délégués à Sonnet/Haiku en synthèses compressées, plan rédigé par Fable) ; /plan-run applique le plan en session Sonnet, parallélise les tâches à périmètres disjoints, et sur blocage s'arrête sans inventer — synthèse écrite dans le plan pour arbitrage Fable. Re-entrant, plan sur disque comme seule source de vérité.",
   "author": {
     "name": "Cédric"
   },
   "license": "MIT",
-  "keywords": ["orchestration", "planning", "multi-model", "cost-optimization", "fable"]
+  "keywords": ["orchestration", "planning", "fable", "plan-runner", "cost-optimization"]
 }

@@ -17,13 +17,14 @@ Nearly every historical bug in this project was a desynchronization between thes
 
 ## Non-negotiable invariants
 
-Cost:
-- The orchestrating session is Sonnet — the model guard (Étape 0 of every skill) blocks Fable/Opus sessions and must never be weakened.
-- The `fable`-model agents (`plan-architect`, `fable-advisor`) have **no tools**, receive **compressed briefs only**, and output **judgment only** (skeletons, decisions, directives — never code, never long documents). Any change increasing their input or required output needs strong justification.
-- Fable is never an executor model; escalations are budgeted.
+Cost (v0.21 seat assignment — see D-21):
+- Design commands (`/plan`, `/plan-rework`, `/plan-prompt`) run in a **Fable** session; `/plan-run` runs in a **Sonnet** session. The model guards (Étape 0 of every skill) block the wrong direction and must never be weakened.
+- The Fable design session **never holds volume**: no project-file reads, no web, no MCP inspection, no screenshots in session — exploration, research, inventories and evidence packs are delegated to Sonnet/Haiku sub-agents returning compressed syntheses (web agents: 4-fetch cap, injection quarantine per D-11/D-18).
+- Fable is never an executor model.
 
 Quality:
-- Verification is independent (verifier ≠ executor), per-criterion, rationale-before-verdict, `UNKNOWN` ≠ pass.
+- Criteria are constated ON EVIDENCE by the run session (commands run, diffs read; a sub-agent report is a lead, not a proof), finding-before-verdict, unverifiable ≠ validated.
+- On any uncovered problem the run **stops without inventing** — `Synthèse de blocage` written into the plan, user-mediated Fable arbitration via `Directive de reprise`. Reporting a blockage is a success; inventing a workaround is a failure.
 - Frozen acceptance tests are untouchable; anchored edits (quote before modify). Execution is user-launched by construction (/plan never runs anything; /plan-run is a separate, deliberate command) and any deletion is user-gated; interactive questions happen only when comprehension genuinely requires them — commands otherwise run end-to-end without approval steps.
 - The plan file on disk is the single source of truth: re-entrant, updated after every task, fully re-read after any context compaction. No side registries.
 
@@ -33,13 +34,14 @@ Quality:
 
 ## Testing before commit (manual, minimum)
 
-1. Model guard: invoke a command from a Fable or Opus session → must block with the exact alert, zero side effects.
-2. `/plan` on a small real request → plan conforms to the template (tags `[touche:]`, per-task binary criteria, Méthode line, pre-mortem section), and ends with the cost table + "new Sonnet session" reminder.
-3. Anti-hallucination gate: a planted fake path in a skeleton must be flagged, not silently written.
+1. Model guards, both directions: `/plan` from a Sonnet session → must block with the exact alert, zero side effects; `/plan-run` from a Fable/Opus session → same.
+2. `/plan` (Fable session) on a small real request → plan conforms to the template (tags `[touche:]`, per-task binary criteria, Méthode line, Contrat d'exécution, pre-mortem), no project file read in session (all delegated), and ends with the real-cost recap + "new Sonnet session" reminder.
+3. Anti-hallucination gate: a planted fake path in a plan draft must be flagged `⚠ à vérifier`, not silently written.
+4. Stop-and-synthesize: a task with an unfindable anchor must produce a `Synthèse de blocage` in the plan and stop the run — never an improvised edit.
 Roadmap: automate these via skill-creator evals.
 
 ## Style
 
 - Skills and agents are currently written in French (English translation is the top roadmap item); README/CONTRIBUTING/CHANGELOG/DECISIONS are English.
 - Skill bodies are imperative instructions for Claude, lean, self-contained per file; agent prompts are dense system prompts with hard interdictions spelled out.
-- Never put current tuning values in docs where a mechanism is meant to evolve — name the knob and where it lives (plan header, template) instead. Exception: structural constants (loop bounds, default escalation budget) and the documented pricing assumptions in the recap blocks.
+- Never put current tuning values in docs where a mechanism is meant to evolve — name the knob and where it lives (plan header, template) instead. Exception: structural constants (loop bounds, sub-agent budgets) and the documented pricing assumptions in the recap blocks.

@@ -21,3 +21,4 @@ desktop.ini
 
 # Benchmark working copies (results/ IS versioned — it backs the README table)
 benchmarks/runs/
+.claude/settings.local.json

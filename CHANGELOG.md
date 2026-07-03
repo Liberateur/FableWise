@@ -2,6 +2,20 @@
 
 All notable changes to **fablewise** are documented here. Format inspired by [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). The plugin was developed iteratively on 2026-07-02/03 under its working name *plan-runner*, renamed *fablewise* for public release.
 
+## [0.21.0] — 2026-07-03
+
+**The inversion.** A measured head-to-head (same request, cold start) showed the multi-agent conception pipeline at $7.13 / 25m19 API vs $0.77 / 91s for direct Fable, with equivalent design quality — the dominant cost being the Sonnet orchestrator relay (56%). Design now runs IN a Fable session; execution stays Sonnet. See D-21 (and the superseded/adapted markers on D-01…D-20).
+
+- **`/plan`, `/plan-rework`, `/plan-prompt` require a Fable session** (guard inverted; `/plan-run` keeps its Sonnet guard). The Fable session understands, challenges (GATE only when genuinely needed), and **writes the plan itself** — no more architect/developer round-trips.
+- **Delegation of volume survives as hard rules**: the Fable session never reads project files, browses the web, calls MCP inspection tools or loads screenshots — exploration, research (4-fetch cap, injection quarantine), inventories and verbatim evidence packs run in Sonnet/Haiku sub-agents returning compressed syntheses.
+- **Agents retired**: `plan-architect`, `plan-developer`, `task-verifier`, `fable-advisor`. Kept: `plan-explorer`, `task-executor` (now always Sonnet, for parallel dispatch).
+- **`/plan-run` simplified**: the session applies tasks itself (inline — zero spawn cost) and dispatches parallel `task-executor`s only for disjoint `[touche:]` scopes; criteria constated on evidence by the session (finding before verdict, unverifiable ≠ validated, frozen-test diff check); retry → Plan B → **stop-and-synthesize**: the run stops, writes a `Synthèse de blocage` (with an empty `Directive de reprise`) into the plan, and the user has Fable arbitrate; pasting the directive and relaunching resumes exactly there.
+- **Template**: per-task `[modèle:]` and `[vérif:]` tags, escalation policy/budget removed; new **Contrat d'exécution** section and blockage-synthesis format; `Conso cumulée` now prefers the transcript-measured real cost. **Legacy plans still run** (old tags and budget lines ignored).
+- **Recap reworked**: transcript-based cache-inclusive real cost is the primary figure; sub-agent non-cache volumetry secondary; the "without the plugin" comparison retired (the session IS Fable).
+- Anti-truncation kept without tranche files: Fable writes long plans in several Write/Edit passes (blocks of 3-4 tasks).
+- **Benchmarks harness restored** (`benchmarks/` — protocol, `bench-report.sh`, versioned results; CONTRIBUTING had kept a dangling reference since 0.20 dropped it). Rates in the recap blocks validated against the measured sessions (per-model error ≤ +16 %).
+- **Projected gains** (from measured components, method in `benchmarks/results/2026-07-03-conception.md`): /plan ~$7.13 → ~$3.2 (−55 %) and ~37 → ~10-13 min (−60/70 %); Fable line ~1.5× ($1.04 → ~$1.55) — the accepted D-21 trade. /plan-run: ~2 spawns avoided per sequential task (~30k harness tokens each), orchestration overhead roughly −40 %.
+
 ## [0.20.0] — 2026-07-03
 
 Architect flexibility + small-model push, driven by field feedback (Fable understood Unreal requests far better than Opus — so Fable leads by default, and "Opus builds, Fable signs off" becomes a knob pair, not a doctrine change). See D-20.

@@ -1,12 +1,8 @@
 # FableWise
 
-> **Keep Fable's judgment. Cut its bill by up to ~70%.\***
+> **Fable designs. Sonnet applies. Nothing runs until you launch it.**
 
-Claude's frontier model is brilliant — and expensive. **fablewise** spends it only where nothing cheaper will do: challenging your request, deciding the plan, arbitrating failures. Everything else runs on small models, under independent verification.
-
-**Fable decides · Opus details · Sonnet & Haiku execute and verify.**
-
-\* *Token volumetry vs. the same work run all-Fable; every command also shows the real cache-inclusive cost when the session transcript is reachable — measured, not guessed.*
+Claude's frontier model understands requests better than anything else — so **fablewise** puts it in the driver's seat for *design*, grounded by cheap delegated exploration and web research, then hands execution to Sonnet with one iron rule: **apply the plan exactly; on any problem, stop, invent nothing, and write a blockage synthesis for Fable to arbitrate.**
 
 ## Install
 
@@ -17,7 +13,7 @@ Claude's frontier model is brilliant — and expensive. **fablewise** spends it 
 
 Cowork (Claude desktop app): **Customize > Settings > Plugins** > **Add marketplace** > `Liberateur/FableWise` > install **fablewise**.
 
-> ⚠️ Run every command from a **Sonnet** session — a built-in guard blocks premium-model orchestration. Fable only ever runs inside sub-agents.
+> ⚠️ **Design commands run from a Fable session** (`/plan`, `/plan-rework`, `/plan-prompt`) — **execution runs from a Sonnet session** (`/plan-run`). Built-in guards enforce both directions.
 
 ```
 /plan add rate-limiting to the public API
@@ -25,51 +21,53 @@ Cowork (Claude desktop app): **Customize > Settings > Plugins** > **Add marketpl
 
 ## How it works
 
-Two commands. **`/plan` designs, `/plan-run` executes** — and nothing runs until *you* launch it.
-
 **`/plan` — turn a request into a ready-to-run plan (nothing is executed):**
 
-1. **Sonnet** explores your project — cheap, read-only.
-2. **Fable** makes sure it understands, then challenges — asks only when there's real doubt.
-3. **Fable** decides the skeleton: tasks, model per task, dependencies, Plan Bs, pre-mortem.
-4. **Opus** expands each task into a step-by-step playbook, written straight to disk.
-5. **Haiku** gate-checks every reference — nothing hallucinated, skeleton respected.
-6. The plan lands **🟢 ready** — no approval step, it just waits for you.
+1. **Fable** (your session) understands the request — need vs. assumed means.
+2. **Sonnet** explores your project and returns a compressed synthesis — the Fable session never reads raw files or browses the web itself (cost + injection quarantine).
+3. **Fable** challenges — asks only when there's a real comprehension doubt or structuring choice.
+4. **Sonnet/Haiku** run delegated web research (capped, quarantined) and extract verbatim evidence from the files the plan will cite.
+5. **Fable writes the plan itself**: grouped tasks with chewed-through operating procedures, binary criteria, scope tags, pre-decided Plan Bs, a pre-mortem — written for Sonnet to apply without re-deciding.
+6. **Haiku** gate-checks every reference in one scripted pass — nothing hallucinated.
+7. The plan lands **🟢 ready** — it just waits for you to launch `/plan-run`.
 
-**`/plan-run` — execute it, task by task (from a fresh Sonnet session):**
+**`/plan-run` — execute it (from a fresh Sonnet session):**
 
-1. Reads the plan and runs ready tasks — **in parallel when their scopes don't overlap**.
-2. Every task is **verified by an independent agent**, criterion by criterion — never self-graded.
-3. On failure: retry → pre-decided Plan B → **Fable arbitrates** the exact issue (budgeted).
-4. Progress, costs and journals are written into the plan file — **resume anytime**.
-
-**Fable shows up at exactly three moments:** understand & decide up front, optionally sign off on a digest, arbitrate blockers at run time. Nothing else.
+1. The session applies tasks itself, following operating procedures to the letter (anchored edits, frozen tests) — and **dispatches parallel executors when task scopes (`[touche:]`) don't overlap**.
+2. Every task's binary criteria are checked on evidence — commands run, diffs read, never taken on faith.
+3. On failure: one retry → pre-decided Plan B → **the run stops**. No improvisation: a **blockage synthesis** (nature, attempts, evidence, options) is written into the plan; you take it to Fable, paste the directive back, and relaunch — the run resumes exactly there.
+4. Progress, journals and costs live in the plan file — **resume anytime**, survives crashes and compaction.
 
 ## Commands
 
-| Command | What it does |
-|---|---|
-| `/plan <request>` | Design a multi-model plan. Knobs: `--architecte=opus` (routine plans, no Fable design) · `--validation-fable` (Fable signs off on a digest) |
-| `/plan-run <plan file>` | Execute it with verification and escalation (re-entrant) |
-| `/plan-rework <plans or folder>` | Merge, re-challenge and rebuild aging plans |
-| `/plan-prompt <request>` | One-shot: an optimal prompt + the right model, no plan file |
+| Command | Session | What it does |
+|---|---|---|
+| `/plan <request>` | **Fable** | Design a plan: delegated exploration & research, rechallenge, plan written by Fable |
+| `/plan-run <plan file>` | **Sonnet** | Apply it task by task; parallel when scopes are disjoint; stop-and-synthesize on blockage (re-entrant) |
+| `/plan-rework <plans or folder>` | **Fable** | Merge, re-challenge and rebuild aging plans (history condensed, sources deleted after your GO) |
+| `/plan-prompt <request>` | **Fable** | One-shot: an optimal prompt + the right model, no plan file |
 
-## Why it's cheaper *and* better
+## Why this shape
 
-**Cheaper** — the orchestrator runs on Sonnet (the seat that pays context rent every turn), Fable's output is capped at judgment from compressed briefs (never code, never long documents), long writing is billed at Opus rates, mechanical work and verification at Haiku rates. Every command ends with a **cost recap**: per-model token volumetry plus the real cache-inclusive cost when the transcript allows — each plan file carrying its lifetime spend. Best fit: multi-task plans on real codebases; for one-file fixes the fixed costs dominate, so use `/plan-prompt`.
+A measured head-to-head (2026-07-03, same request, cold — see [benchmarks/](benchmarks/)) showed the previous multi-agent pipeline at **$7.13 / 25 min API** vs **$0.77 / 91 s** for direct no-tools Fable — **9× the cost, 17× the time, equivalent design quality**. But the naked run also showed why grounding matters: a post-cutoff prior asserted as fact, a design colliding with the project's existing architecture, a scope decided without asking. v0.21 keeps the grounding and drops the coordination: projected **~$3.2 and ~10-13 min** for the same request (−55 % cost, −60/70 % time vs the pipeline — projection from measured components, to be replaced by the first real run). What earned its keep was kept:
 
-**Better** — **independent per-criterion verification** (verifier ≠ executor, `UNKNOWN` ≠ pass) and **frozen acceptance tests** (touch a test = instant FAIL); pre-mortem and Plan Bs designed by the strongest model *before* the run, not improvised by the weakest during it; **anchored edits** (quote before modify) and **prompt-injection quarantine** (web research is read-only data, never instructions). The plan file on disk is the single source of truth — it survives crashes and context compaction, and runs resume where they stopped.
+- **Delegation of volume** — exploration, web research and inventories run in cheap sub-agents returning compressed syntheses; the Fable session pays context rent on judgment only.
+- **Injection quarantine** — web researchers are read-only, capped, and return typed data; untrusted content never becomes instructions.
+- **Grounding gates** — verbatim evidence before writing, a scripted anti-hallucination pass after; unverifiable references are flagged `⚠`, never guessed.
+- **Discipline at run time** — anchored edits (quote before modify), frozen acceptance tests (touch a test = instant fail), scope-tag parallelism with named exclusive resources (`editor`, `db`…), and the stop-and-synthesize contract: reporting a blockage is a success, inventing a workaround is a failure.
+- **The plan file is the single source of truth** — re-entrant, updated after every task, fully re-read after compaction.
 
 ## Requirements & notes
 
-- Claude Code or Cowork with per-subagent model override (`fable`, `opus`, `sonnet`, `haiku`).
-- Commands must run from a **Sonnet** session — the guard blocks Fable/Opus orchestration by design.
+- Claude Code or Cowork with per-subagent model override (`sonnet`, `haiku`, `opus`).
+- `/plan`, `/plan-rework`, `/plan-prompt` require a **Fable** session; `/plan-run` requires a **Sonnet** session — guards block the wrong direction with zero side effects.
+- Plans produced by fablewise ≤ 0.20 still run: `/plan-run` ignores legacy per-task model tags and escalation budgets.
 - Optional per-project files: `.claude/fablewise-lessons.md` (compounding lessons, user-approved) · `.claude/fablewise-notify` (ntfy/webhook URL for notifications).
 - Skill instructions are currently in French (outputs follow your project's language); English translation is the top roadmap item — PRs welcome.
 
 ## Contributing
 
-Issues and PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and [DECISIONS.md](DECISIONS.md) (the *why* behind every mechanism). Example plan: [examples/example-plan.md](examples/example-plan.md). Golden rule: any pipeline change propagates across all four layers (skills, agents, plan template, README).
+Issues and PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and [DECISIONS.md](DECISIONS.md) (the *why* behind every mechanism, including the v0.21 inversion). Example plan: [examples/example-plan.md](examples/example-plan.md). Golden rule: any pipeline change propagates across all four layers (skills, agents, plan template, README).
 
 ## License
 

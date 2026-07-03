@@ -7,7 +7,7 @@
     {
       "name": "fablewise",
       "source": "./",
-      "description": "Cut your Fable 5 bill — keep its judgment. The premium model decides plans and arbitrates failures; Opus writes the playbooks; Sonnet/Haiku execute and verify every task."
+      "description": "Fable designs, Sonnet applies. Plans are written by the frontier model in its own session — grounded by delegated exploration and quarantined web research — then executed by Sonnet, which stops and synthesizes for Fable arbitration instead of improvising."
     }
   ]
 }

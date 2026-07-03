@@ -3,8 +3,8 @@
 > **Statut** : 🟢 validé
 > **Demande d'origine** : "add rate-limiting to the public API"
 > **Énoncé consolidé** : Per-IP rate limiting on all `/api/public/*` routes (sliding window, 429 + Retry-After), limits configurable per route group, in-memory store now with a clean interface for Redis later. Admin routes excluded (user decision, gate of 2026-07-03).
-> **Créé** : 2026-07-03 · **Budget escalades Fable** : 5 · **Consommées** : 0
-> **Conso cumulée (estimée, majorant)** : conception $1.10 · runs $0 (0 runs) · **total $1.10**
+> **Créé** : 2026-07-03 · **Rédigé par** : Fable (session /plan)
+> **Conso cumulée** : conception $1.10 · runs $0 (0 runs) · **total $1.10** · **dont Fable 14k tokens**
 
 ## Contexte
 
@@ -12,14 +12,14 @@ Express 4 app, entry `src/app.js`; public routes mounted in `src/routes/public.j
 
 ## Décisions & arbitrages
 
-- Sliding-window counter per IP+group, not fixed window — burst-proof at boundaries; token bucket rejected as overkill for 3 groups (architect, confirmed at gate).
+- Sliding-window counter per IP+group, not fixed window — burst-proof at boundaries; token bucket rejected as overkill for 3 groups (Fable, confirmed at gate).
 - Store behind `RateStore` interface (`incr(key, windowMs)`) — in-memory Map now, Redis later without touching the middleware.
 - 429 body follows the existing error envelope of `src/middleware/error.js`; `Retry-After` in seconds.
 - Admin routes excluded (user decision at gate).
 
-## Politique d'escalade
+## Contrat d'exécution
 
-Pour chaque tâche : exécution → vérification contre les critères → si échec, 1 retry avec le feedback du vérifieur → si nouvel échec : Plan B si `[risque: haut]`, sinon brief à `fable-advisor` (Consommées +1) → application → si toujours bloqué : `⏸`, brief au Journal, tâche suivante. Budget épuisé = arrêt, main à l'utilisateur.
+Ce plan est appliqué par une session **Sonnet** (`/plan-run`) qui suit les modes opératoires à la lettre et constate les critères sur pièces. Pour chaque tâche : application → constat des critères → si échec, 1 retry → si nouvel échec, Plan B s'il existe (`[risque: haut]`) → sinon **arrêt du run** : la session n'invente rien, écrit une `Synthèse de blocage` dans la tâche (nature, tentatives, pièces, options, champ `Directive de reprise` vide) et rend la main. L'utilisateur fait arbitrer la synthèse par **Fable**, reporte la décision dans `Directive de reprise`, puis relance `/plan-run`.
 
 ## Pre-mortem
 
@@ -27,7 +27,7 @@ The plan failed because the sliding-window counter keyed on `req.ip` returned th
 
 ## Tâches
 
-### T0 — Verify environment smoke-test `[modèle: haiku]` `[deps: —]` `[statut: ⬜]` `[touche: —]`
+### T0 — Verify environment smoke-test `[deps: —]` `[statut: ⬜]` `[touche: —]`
 
 - **Quoi** : Confirm the environment contract before any work.
 - **Méthode** : Run the existing `npm run dev:check`; no new script needed (alternative — writing a dedicated verify.sh — rejected: the project already has one).
@@ -42,7 +42,7 @@ The plan failed because the sliding-window counter keyed on `req.ip` returned th
   2. `npm test` exits 0.
 - **Journal** :
 
-### T1 — Write failing acceptance tests `[modèle: sonnet]` `[deps: T0]` `[statut: ⬜]` `[touche: tests/rate-limit.test.js]`
+### T1 — Write failing acceptance tests `[deps: T0]` `[statut: ⬜]` `[touche: tests/rate-limit.test.js]`
 
 - **Quoi** : Acceptance tests for the limiter, written first, committed, then frozen.
 - **Méthode** : Supertest against the real app with a tiny test window (via config override), not unit tests of the store — the behavior under test is HTTP semantics (alternative rejected: mocking the clock everywhere, brittle).
@@ -58,7 +58,7 @@ The plan failed because the sliding-window counter keyed on `req.ip` returned th
   2. Commit present in `git log`.
 - **Journal** :
 
-### T2 — Implement the limiter middleware `[modèle: sonnet]` `[deps: T1]` `[statut: ⬜]` `[risque: haut]` `[touche: src/middleware/rate-limit.js, src/config/index.js]`
+### T2 — Implement the limiter middleware `[deps: T1]` `[statut: ⬜]` `[risque: haut]` `[touche: src/middleware/rate-limit.js, src/config/index.js]`
 
 - **Quoi** : Sliding-window per-IP limiter behind a `RateStore` interface, per-group limits from config.
 - **Méthode** : Sliding window log-lite (two adjacent fixed windows, weighted) over a Map store — O(1) memory per key vs true log; token bucket rejected (D-in-plan #1).
@@ -79,7 +79,7 @@ The plan failed because the sliding-window counter keyed on `req.ip` returned th
 - **Plan B** : If the two-window approximation fails the sliding test, fall back to exact timestamp-list-per-key (bounded by maxHits per window, pruned on incr) — simpler, slightly more memory, same interface; steps: replace `incr` internals only, rerun tests.
 - **Journal** :
 
-### T3 — Wire routes + config docs `[modèle: haiku]` `[deps: T2]` `[statut: ⬜]` `[groupe: A]` `[touche: src/routes/public.js, README.md]`
+### T3 — Wire routes + config docs `[deps: T2]` `[statut: ⬜]` `[groupe: A]` `[touche: src/routes/public.js, README.md]`
 
 - **Quoi** : Mount the middleware on the 3 public route groups; document the config keys.
 - **Méthode** : One `rateLimit({group})` per router group at mount point — not per-endpoint (12 duplications rejected).
@@ -92,7 +92,7 @@ The plan failed because the sliding-window counter keyed on `req.ip` returned th
   2. `grep -c rateLimit src/routes/public.js` returns 3.
 - **Journal** :
 
-### T4 — End-to-end check `[modèle: haiku]` `[deps: T3]` `[statut: ⬜]` `[groupe: A]` `[touche: —]`
+### T4 — End-to-end check `[deps: T3]` `[statut: ⬜]` `[groupe: A]` `[touche: —]`
 
 - **Quoi** : Prove the wired app limits for real, outside jest.
 - **Mode opératoire** :
