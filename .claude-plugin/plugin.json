@@ -1,6 +1,6 @@
 {
   "name": "fablewise",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "description": "Fable conçoit, Sonnet applique : /plan, /plan-rework et /plan-prompt tournent en session Fable (exploration, recherches et inventaires délégués à Sonnet/Haiku en synthèses compressées, plan rédigé par Fable) ; /plan-run applique le plan en session Sonnet, parallélise les tâches à périmètres disjoints, et sur blocage s'arrête sans inventer — synthèse écrite dans le plan pour arbitrage Fable. Re-entrant, plan sur disque comme seule source de vérité.",
   "author": {
     "name": "Cédric"

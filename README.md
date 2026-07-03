@@ -38,6 +38,11 @@ Cowork (Claude desktop app): **Customize > Settings > Plugins** > **Add marketpl
 3. On failure: one retry → pre-decided Plan B → **the run stops**. No improvisation: a **blockage synthesis** (nature, attempts, evidence, options) is written into the plan; you take it to Fable, paste the directive back, and relaunch — the run resumes exactly there.
 4. Progress, journals and costs live in the plan file — **resume anytime**. A run continues through context compaction (full plan re-read) and only ends on blockage, gate, or completion.
 
+**Running to completion, unattended.** Since 0.22 a single run session goes the distance (heavy tasks delegated, compaction crossed). What remains is session mortality — a session that dies or ends is relaunched, and re-entrance makes every relaunch idempotent. Two carriers, one per environment:
+
+- **CLI (Claude Code)** — `scripts/fablewise-loop.sh <plan.md> [max_iter]` from the project root: relaunches headless Sonnet sessions until the plan reaches one of its three legitimate ends — `✅` done (exit 0), `🔴` blockage → Fable arbitration (exit 2), gate / no progress → your eye is required (exit 3). It never crosses a blockage.
+- **Claude desktop app (Cowork)** — no headless relaunch exists, so use a **scheduled task** in the project's workspace: e.g. hourly, prompt `/plan-run <plan> — autonomous, no questions`. The scheduled session must be **Sonnet** (the model guard blocks Fable/Opus). On a terminal state (`✅`, `🔴`, gate pending) the run detects it in one read and offers to disable the schedule instead of re-working.
+
 ## Commands
 
 | Command | Session | What it does |

@@ -2,6 +2,13 @@
 
 All notable changes to **fablewise** are documented here. Format inspired by [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). The plugin was developed iteratively on 2026-07-02/03 under its working name *plan-runner*, renamed *fablewise* for public release.
 
+## [0.23.0] — 2026-07-03
+
+**Loop until done.** After 0.22, the residual cause of premature stops is session mortality; a session cannot relaunch itself, so the loop lives outside — and never crosses a blockage or a gate (those are decisions, not failures). See D-23.
+
+- **`scripts/fablewise-loop.sh <plan> [max_iter]`** (CLI): relaunches headless Sonnet `/plan-run` sessions until `✅` (exit 0), `🔴` blockage (exit 2), or gate/no-progress detected by plan-file hash (exit 3); bounded iterations, opt-in `.claude/fablewise-notify` pings.
+- **Claude desktop app (Cowork)**: documented scheduled-task pattern (e.g. hourly `/plan-run <plan>` on a Sonnet session — the model guard applies). `/plan-run` now handles being a scheduled firing: on an already-terminal plan (`✅`, `🔴` without directive, gate pending) it constates in one read, offers to disable the schedule, and re-works nothing.
+
 ## [0.22.0] — 2026-07-03
 
 **Runs that go the distance.** A real 20-task autonomous run stopped after 3 tasks on context saturation (capture-heavy audits executed inline). Three mechanisms so a run only ever stops on blockage, gate, or completion — see D-22.
