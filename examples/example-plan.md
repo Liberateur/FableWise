@@ -1,6 +1,8 @@
 # Plan : Rate limiting on the public API
 
 > **Statut** : 🟢 validé
+> **Run en cours** : —
+> **Escalades Fable** : 0/5
 > **Demande d'origine** : "add rate-limiting to the public API"
 > **Énoncé consolidé** : Per-IP rate limiting on all `/api/public/*` routes (sliding window, 429 + Retry-After), limits configurable per route group, in-memory store now with a clean interface for Redis later. Admin routes excluded (user decision, gate of 2026-07-03).
 > **Créé** : 2026-07-03 · **Rédigé par** : Fable (session /plan)

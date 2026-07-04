@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # fablewise-loop — relaunch /plan-run in fresh headless Sonnet sessions until the plan
-# reaches one of its three legitimate ends: ✅ done, 🔴 blockage (Fable arbitration),
-# or a gate / no-progress stop (the user's eye is required).
+# reaches one of its legitimate ends: ✅ done, 🔴 blockage (Fable arbitration),
+# ⏸ human action awaited (see the plan's "Attendu humain" block), or a no-progress stop.
 #
 # The plan file on disk is the single source of truth (D-09): every relaunch resumes
 # exactly where the previous session stopped. This loop NEVER crosses a blockage —
@@ -13,7 +13,7 @@
 # Extra CLI flags: FABLEWISE_CLAUDE_ARGS env var (e.g. --allowedTools ...).
 #
 # Exit codes: 0 plan ✅ terminé · 2 blockage 🔴 (arbitrate with Fable, then relaunch)
-#             3 gate or no progress · 4 max iterations reached · 1 usage/error
+#             3 ⏸ human action awaited, or no progress · 4 max iterations reached · 1 usage/error
 
 set -u
 
@@ -46,6 +46,8 @@ while [ "$i" -lt "$MAX_ITER" ]; do
     *"✅"*) echo "Plan terminé (✅) après $i itération(s)."; notify "terminé ✅ ($i itérations)"; exit 0 ;;
     *"🔴"*) echo "Run interrompu sur BLOCAGE (🔴) — ouvre une session Fable pour arbitrer la Synthèse de blocage, reporte la Directive de reprise, puis relance cette boucle."
             notify "blocage 🔴 — arbitrage Fable requis"; exit 2 ;;
+    *"⏸"*) echo "En attente d'action humaine (⏸) — voir le bloc « Attendu humain » du Rapport de run ; fais les gestes listés puis relance cette boucle."
+            notify "⏸ action humaine attendue (voir Attendu humain)"; exit 3 ;;
   esac
 
   if [ "$(hash_of)" = "$BEFORE" ]; then

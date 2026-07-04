@@ -56,7 +56,7 @@ Comme `/plan` étape 4 : `[projet]` → `plan-explorer`, `[web]` → `general-pu
 
 **Dossier de pièces** (délégué, `model: haiku`) : extraits verbatim des fichiers que les nouveaux plans citeront — signatures, blocs ±10 lignes, ≤ 150 lignes/fichier, copier sans résumer. Ne jamais citer une référence absente des pièces et synthèses : `⚠ à vérifier`.
 
-Rédiger ensuite chaque plan cible au template (`skills/plan/references/plan-template.md`), mêmes exigences que `/plan` étape 6 (tâches regroupées et mâchées pour Sonnet, critères binaires constatables machine — validations utilisateur regroupées aux tâches gate —, `[touche:]`, `[contexte: lourd]` sur les tâches à sortie volumineuse, Plans B, pre-mortem, test-first, anti-troncature par passes de 3-4 tâches), plus :
+Rédiger ensuite chaque plan cible au template (`skills/plan/references/plan-template.md`), mêmes exigences que `/plan` étape 6 (tâches regroupées et mâchées pour Sonnet, critères binaires constatables machine — validations utilisateur regroupées aux tâches gate —, `[touche:]`, `[contexte: lourd]` sur les tâches à sortie volumineuse, `[humain: <geste>]` sur les actions que seule une personne peut faire, budget `Escalades Fable` fixé en en-tête, Plans B, pre-mortem, test-first, anti-troncature par passes de 3-4 tâches), plus :
 
 - En-tête de filiation : `> **Refonte de** : <plans sources> — YYYY-MM-DD`.
 - Une section **Acquis & leçons (condensé d'héritage)** : la seule trace qui survivra aux sources — tâches `✅` condensées (quoi, où, journaux résumés), erreurs investiguées et leurs leçons, décisions passées encore pertinentes. Assez riche pour ne jamais regretter les fichiers supprimés.
@@ -68,7 +68,7 @@ Rédiger ensuite chaque plan cible au template (`skills/plan/references/plan-tem
 ## Étape 7 — Gate, écriture et suppression des sources
 
 0. **Gate anti-hallucination** (délégué `model: haiku`, un seul appel, une passe scriptée — cf. `/plan` étape 7) sur les nouveaux plans.
-0bis. **Garde de concurrence** : re-vérifier que les sources n'ont pas changé depuis l'inventaire (mtime/contenu). Si elles ont bougé : STOP, montrer le diff, demander avant d'écraser ou supprimer.
+0bis. **Garde de concurrence** : re-vérifier que les sources n'ont pas changé depuis l'inventaire (mtime/contenu). Si elles ont bougé : STOP, montrer le diff, demander avant d'écraser ou supprimer. Si une source porte une ligne `Run en cours` avec un horodatage de moins de 2 h : un run est probablement actif dessus — STOP, ne jamais refondre un plan pendant qu'il s'exécute.
 1. Écrire le ou les nouveaux plans (statut **`🟢 validé`** ; `🟡` seulement si l'utilisateur demande une revue avant run).
 2. **Supprimer les plans sources** — uniquement après écriture des nouveaux ET validation au GATE de l'étape 6. Projet versionné Git : le noter (l'historique conserve les fichiers). Non versionné : proposer suppression directe ou corbeille, au choix de l'utilisateur.
 3. Résumer : plans créés, sources supprimées. Terminer par le rappel exact (répété pour chaque plan créé, avant le récap de conso) :

@@ -1,6 +1,8 @@
 # Plan : <titre court>
 
-> **Statut** : 🟡 en attente de validation · 🟢 validé · 🔄 en cours · ✅ terminé · 🔴 interrompu
+> **Statut** : 🟡 en attente de validation · 🟢 validé · 🔄 en cours · ⏸ en attente humaine · ✅ terminé · 🔴 interrompu
+> **Run en cours** : — <!-- posé par /plan-run au démarrage (identifiant de session + horodatage ISO), horodatage rafraîchi à chaque tâche close, remis à — à tout arrêt ; périmé après 2 h sans rafraîchissement -->
+> **Escalades Fable** : 0/5 <!-- incrémenté par /plan-run à CHAQUE Synthèse de blocage écrite (un arbitrage Fable ne décompte rien) ; budget fixé par Fable à la conception ; épuisé → le run s'arrête et recommande /plan-rework plutôt qu'un nouvel arbitrage -->
 > **Demande d'origine** : <verbatim de l'utilisateur>
 > **Énoncé consolidé** : <demande après rechallenge Fable et arbitrages utilisateur>
 > **Créé** : YYYY-MM-DD · **Rédigé par** : Fable (session /plan)
@@ -17,7 +19,7 @@
 
 ## Contrat d'exécution
 
-Ce plan est appliqué par une session **Sonnet** (`/plan-run`) qui suit les modes opératoires à la lettre et constate les critères sur pièces. Pour chaque tâche : application → constat des critères → si échec, 1 retry → si nouvel échec, Plan B s'il existe (`[risque: haut]`) → sinon **arrêt du run** : la session n'invente rien, écrit une `Synthèse de blocage` dans la tâche (nature, tentatives, pièces, options, champ `Directive de reprise` vide) et rend la main. L'utilisateur fait arbitrer la synthèse par **Fable**, reporte la décision dans `Directive de reprise`, puis relance `/plan-run`.
+Ce plan est appliqué par une session **Sonnet** (`/plan-run`) qui suit les modes opératoires à la lettre et constate les critères sur pièces. Pour chaque tâche : application → constat des critères → si échec, 1 retry → si nouvel échec, Plan B s'il existe (`[risque: haut]`) → sinon **arrêt du run** : la session n'invente rien, écrit une `Synthèse de blocage` dans la tâche (nature, tentatives, pièces, options, champ `Directive de reprise` vide) et rend la main. L'utilisateur fait arbitrer la synthèse par **Fable**, reporte la décision dans `Directive de reprise`, puis relance `/plan-run`. **Effet nul = canal suspect** : si une modification appliquée avec succès ne produit aucun changement observable, le retry audite le canal d'observation (rendu/visible/bindé/tick) par un test discriminant à effet grossier — jamais un deuxième tuning à l'aveugle. **Directive de reprise** : si la cause du blocage n'est pas prouvée, la directive Fable commence par une expérience discriminante qui prouve/réfute la cause, et le run constate cette preuve avant d'appliquer le fix.
 
 ## Pre-mortem
 
@@ -29,7 +31,7 @@ Ce plan est appliqué par une session **Sonnet** (`/plan-run`) qui suit les mode
 
 ### T1 — <titre impératif> `[deps: —]` `[statut: ⬜]`
 
-<!-- Tags : `[touche: chemins/assets exacts + ressources exclusives nommées]` OBLIGATOIRE (base du calcul de parallélisme ; ressource exclusive = tout système n'acceptant pas d'accès concurrents : `editor` pour un éditeur/moteur vivant, `db`, `device`, `dev-server`…) · `[groupe: X]` optionnel (tâches mécaniques cohésives exécutées ensemble) · `[risque: haut]` si Plan B pré-décidé · `[contexte: lourd]` si sortie volumineuse prévisible (audit visuel multi-captures, session capture d'un système vivant, build, tests verbeux) — /plan-run délègue OBLIGATOIREMENT ces tâches à un exécuteur, même seules. -->
+<!-- Tags : `[touche: chemins/assets exacts + ressources exclusives nommées]` OBLIGATOIRE (base du calcul de parallélisme ; ressource exclusive = tout système n'acceptant pas d'accès concurrents : `editor` pour un éditeur/moteur vivant, `db`, `device`, `dev-server`…) · `[groupe: X]` optionnel (tâches mécaniques cohésives exécutées ensemble) · `[risque: haut]` si Plan B pré-décidé · `[contexte: lourd]` si sortie volumineuse prévisible (audit visuel multi-captures, session capture d'un système vivant, build, tests verbeux) — /plan-run délègue OBLIGATOIREMENT ces tâches à un exécuteur, même seules · `[humain: <geste>]` si l'action ne peut être faite que par une personne (rebuild + relance d'un outil, geste UI sans verbe outillé, manipulation physique) — /plan-run ne la tente JAMAIS : il la liste dans « Attendu humain », continue les branches indépendantes, et constate ses critères machine au run suivant, une fois le geste fait. -->
 
 - **Quoi** : <objectif de la tâche en 1-2 lignes>
 - **Méthode** : <méthode retenue par Fable + alternative écartée et pourquoi>
@@ -46,4 +48,4 @@ Ce plan est appliqué par une session **Sonnet** (`/plan-run`) qui suit les mode
 
 ## Rapport de run
 
-<!-- Rempli par /plan-run à chaque fin d'exécution : date, tâches faites/bloquées/gelées, retries et Plans B appliqués, écarts notables, reste à faire. -->
+<!-- Rempli par /plan-run à chaque fin d'exécution : date, tâches faites/bloquées/gelées, retries et Plans B appliqués, écarts notables, reste à faire. Si le statut de fin est ⏸ en attente humaine : bloc **Attendu humain** — pour chaque action attendue : quoi (le geste exact), où (fichier/outil/écran), et comment le run suivant le constatera (critère machine) ; décision-prêt, sans relire le plan entier. -->

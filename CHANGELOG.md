@@ -2,6 +2,21 @@
 
 All notable changes to **fablewise** are documented here. Format inspired by [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). The plugin was developed iteratively on 2026-07-02/03 under its working name *plan-runner*, renamed *fablewise* for public release.
 
+## [0.26.0] — 2026-07-04
+
+**Root-cause discipline & human dependency first-class.** Driven by a full audit of the ocean-plan session cluster (runs 4-7: five runs lost on a `hidden in game` root cause, one identical-captures tool race, one migration/run collision, one ghost escalation budget), cross-checked against 2026 state-of-the-art posts on agent harnesses. See D-26, D-27, D-28.
+
+- **Null effect = suspect channel** (`/plan-run`, `task-executor`, template contract): a change that applies cleanly but changes nothing observable triggers an observation-channel audit (rendered/visible/bound/ticking) with a crude discriminating test — never a second blind tuning.
+- **Proof-bearing directives**: a `Directive de reprise` for an unproven cause starts with a discriminating experiment; the run constates the proof before applying the fix; a refuted cause returns to arbitration with the finding.
+- **Hash-checked artifacts** (operationalizes D-07): executors report `shasum` + size per binary artifact in their CHECKPOINT; the run session re-checks them and independently re-reads modified live-system properties.
+- **Lessons reach executors**: relevant `.claude/fablewise-lessons.md` lines are injected verbatim (filtered by the task's tools/files) into `task-executor` prompts; lessons are kept factual and narrow (anti-drift).
+- **`[humain: <geste>]` tag** — set at design (a capability probe joins `/plan` exploration: what the harness cannot do) or learned in-run once a wall is established (tag written back into the plan). Never attempted; independent branches continue.
+- **`⏸ en attente humaine` header status** + decision-ready **Attendu humain** block (gesture, where, machine criterion for the next run to constate). Loop (exit 3), scheduled-run detection and Stop hook all treat `⏸` as a legitimate end — writing the true state is the hook's exit key.
+- **`Run en cours` header line** (session + ISO timestamp, refreshed per task, cleared at stop, stale after 2 h): interactive runs finding a fresh marker stop and ask; autonomous relaunches take over and note it; `/plan-rework` refuses fresh-marked sources.
+- **`Escalades Fable : n/m` header budget made official** (the audited runs were honoring an undocumented ghost of it): +1 per synthesis written, arbitrations free, budget set by Fable at design (default 5); exhausted → recommend `/plan-rework`.
+- **Recap**: when the real cost is unavailable (Cowork), the run cumulates sub-agent non-cache volumetry into the header (`runs ~{n}k tokens sous-agents`) instead of leaving "n/d".
+- Legacy plans: missing header lines added on first touch; pre-0.21 escalation-policy lines still ignored (the new header line is authoritative).
+
 ## [0.25.0] — 2026-07-03
 
 **The lock on the door.** Opt-in Stop hook against premature stops; Opus-for-runs re-examined against 2026 docs and re-rejected. See D-25.
