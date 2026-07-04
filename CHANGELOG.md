@@ -2,6 +2,15 @@
 
 All notable changes to **fablewise** are documented here. Format inspired by [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). The plugin was developed iteratively on 2026-07-02/03 under its working name *plan-runner*, renamed *fablewise* for public release.
 
+## [0.28.1] — 2026-07-04
+
+**Finish the 0.28 propagation.** Two run-semantics surfaces (the CLAUDE.md-flagged `scripts/` and the example plan) still told users to take a blockage to Fable; a self-inconsistent line in `/plan-debug` and a missing guard-test entry rounded it out. Prompts/docs only.
+
+- **`scripts/fablewise-loop.sh`**: on `🔴` (exit 2) it now points to `/plan-debug` in an Opus session (message, notify text, header comment, exit-code doc) instead of "arbitrate with Fable".
+- **`examples/example-plan.md`**: Contrat d'exécution aligned with the 0.28 template (blockage → Opus `/plan-debug`, Fable last resort).
+- **`skills/plan-debug/SKILL.md`**: the read-only rationale no longer says "arbitration is Fable's" — the reprise decision is the investigation's own, Fable only as last resort.
+- **`CLAUDE.md`** testing checklist: the model-guard case now also covers `/plan-debug` from a non-Opus session.
+
 ## [0.28.0] — 2026-07-04
 
 **Blockage escalation reroutes to Opus (`/plan-debug`), off Fable.** In the ocean sessions, taking every `Synthèse de blocage` to a Fable session burned premium tokens on investigation volume (screenshots, test replays, full-plan reads). That volume now lands on Opus — cheaper, and it holds volume the way Fable must not — with Fable reached only when `/plan-debug` judges the frontier truly necessary. See D-29.

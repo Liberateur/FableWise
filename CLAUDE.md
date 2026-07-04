@@ -45,7 +45,7 @@ Autonomy (v0.22–0.26 — see D-22…D-28):
 
 ## Testing before commit (manual, minimum)
 
-1. Model guards, both directions: `/plan` from a Sonnet session → must block with the exact alert, zero side effects; `/plan-run` from a Fable/Opus session → same.
+1. Model guards, all directions: `/plan` from a Sonnet session → must block with the exact alert, zero side effects; `/plan-run` from a Fable/Opus session → same; `/plan-debug` from any non-Opus session → same.
 2. `/plan` (Fable session) on a small real request → plan conforms to the template (tags `[touche:]`, per-task binary criteria, Méthode line, Contrat d'exécution, pre-mortem), no project file read in session (all delegated), and ends with the real-cost recap + "new Sonnet session" reminder.
 3. Anti-hallucination gate: a planted fake path in a plan draft must be flagged `⚠ à vérifier`, not silently written.
 4. Stop-and-synthesize: a task with an unfindable anchor must produce a `Synthèse de blocage` in the plan and stop the run — never an improvised edit.

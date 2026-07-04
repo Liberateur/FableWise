@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # fablewise-loop — relaunch /plan-run in fresh headless Sonnet sessions until the plan
-# reaches one of its legitimate ends: ✅ done, 🔴 blockage (Fable arbitration),
+# reaches one of its legitimate ends: ✅ done, 🔴 blockage (investigate with /plan-debug in an Opus session),
 # ⏸ human action awaited (see the plan's "Attendu humain" block), or a no-progress stop.
 #
 # The plan file on disk is the single source of truth (D-09): every relaunch resumes
@@ -12,7 +12,7 @@
 # Requires: Claude Code CLI (`claude`). Sessions run with --dangerously-skip-permissions.
 # Extra CLI flags: FABLEWISE_CLAUDE_ARGS env var (e.g. --allowedTools ...).
 #
-# Exit codes: 0 plan ✅ terminé · 2 blockage 🔴 (arbitrate with Fable, then relaunch)
+# Exit codes: 0 plan ✅ terminé · 2 blockage 🔴 (investigate with /plan-debug in an Opus session, then relaunch)
 #             3 ⏸ human action awaited, or no progress · 4 max iterations reached · 1 usage/error
 
 set -u
@@ -44,8 +44,8 @@ while [ "$i" -lt "$MAX_ITER" ]; do
   STATUS=$(status_of)
   case "$STATUS" in
     *"✅"*) echo "Plan terminé (✅) après $i itération(s)."; notify "terminé ✅ ($i itérations)"; exit 0 ;;
-    *"🔴"*) echo "Run interrompu sur BLOCAGE (🔴) — ouvre une session Fable pour arbitrer la Synthèse de blocage, reporte la Directive de reprise, puis relance cette boucle."
-            notify "blocage 🔴 — arbitrage Fable requis"; exit 2 ;;
+    *"🔴"*) echo "Run interrompu sur BLOCAGE (🔴) — ouvre une session Opus et lance /plan-debug sur ce plan (il enquête et rédige la Directive de reprise ; Fable seulement s'il le recommande), reporte la directive, puis relance cette boucle."
+            notify "blocage 🔴 — investigation /plan-debug (Opus) requise"; exit 2 ;;
     *"⏸"*) echo "En attente d'action humaine (⏸) — voir le bloc « Attendu humain » du Rapport de run ; fais les gestes listés puis relance cette boucle."
             notify "⏸ action humaine attendue (voir Attendu humain)"; exit 3 ;;
   esac

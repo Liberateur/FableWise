@@ -1,6 +1,6 @@
 {
   "name": "fablewise",
-  "version": "0.28.0",
+  "version": "0.28.1",
   "description": "Fable conçoit, Sonnet applique : /plan, /plan-rework et /plan-prompt tournent en session Fable (exploration, recherches et inventaires délégués à Sonnet/Haiku en synthèses compressées, plan rédigé par Fable) ; /plan-run applique le plan en session Sonnet, parallélise les tâches à périmètres disjoints, et sur blocage s'arrête sans inventer — synthèse écrite dans le plan, escaladée à /plan-debug ; /plan-debug investigue un plan en difficulté en session Opus (volume d'enquête absorbé hors Fable, Fable en dernier recours) et rend un condensé problème→cause + une reco de modèle + un prompt de debug. Re-entrant, plan sur disque comme seule source de vérité.",
   "author": {
     "name": "Cédric"

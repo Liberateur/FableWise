@@ -63,7 +63,7 @@ Ne jamais citer dans le prompt une référence non constatée pendant l'investig
 
 ## Étape 5 — Restitution (lecture seule)
 
-Rendre à l'utilisateur, **sans créer ni modifier aucun fichier** (le plan reste intact ; consigner un blocage dans le plan est le rôle de `/plan-run`, l'arbitrage celui de Fable) :
+Rendre à l'utilisateur, **sans créer ni modifier aucun fichier** (le plan reste intact ; consigner un blocage dans le plan est le rôle de `/plan-run`, la décision de reprise revient à cette investigation — Fable seulement en dernier recours) :
 
 1. le **condensé problème→cause** ;
 2. **une phrase de reco**, juste avant le prompt : « Debuggable en Opus : … » ou « Intervention Fable recommandée : … » — avec le pourquoi en une ligne ;
