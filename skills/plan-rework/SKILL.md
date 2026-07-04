@@ -77,7 +77,7 @@ Rédiger ensuite chaque plan cible au template (`skills/plan/references/plan-tem
 > ```
 > /plan-run {chemin exact du plan}
 > ```
-> L'exécution ne se fait JAMAIS dans cette session Fable — Sonnet applique, Fable arbitre les blocages qu'on lui rapporte.
+> L'exécution ne se fait JAMAIS dans cette session Fable — Sonnet applique ; les blocages s'investiguent en session Opus via `/plan-debug` (Fable en dernier recours).
 
 ## Règles transverses
 

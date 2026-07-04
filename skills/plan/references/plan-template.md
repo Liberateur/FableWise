@@ -2,7 +2,7 @@
 
 > **Statut** : 🟡 en attente de validation · 🟢 validé · 🔄 en cours · ⏸ en attente humaine · ✅ terminé · 🔴 interrompu
 > **Run en cours** : — <!-- posé par /plan-run au démarrage (identifiant de session + horodatage ISO), horodatage rafraîchi à chaque tâche close, remis à — à tout arrêt ; périmé après 2 h sans rafraîchissement -->
-> **Escalades Fable** : 0/5 <!-- incrémenté par /plan-run à CHAQUE Synthèse de blocage écrite (un arbitrage Fable ne décompte rien) ; budget fixé par Fable à la conception ; épuisé → le run s'arrête et recommande /plan-rework plutôt qu'un nouvel arbitrage -->
+> **Escalades Fable** : 0/5 <!-- incrémenté par /plan-run à CHAQUE Synthèse de blocage écrite (une investigation /plan-debug ou un arbitrage Fable ne décompte rien) ; budget fixé par Fable à la conception ; épuisé → le run s'arrête et recommande /plan-rework. Escalade d'un blocage = /plan-debug en session Opus (Fable seulement si /plan-debug le recommande) -->
 > **Demande d'origine** : <verbatim de l'utilisateur>
 > **Énoncé consolidé** : <demande après rechallenge Fable et arbitrages utilisateur>
 > **Créé** : YYYY-MM-DD · **Rédigé par** : Fable (session /plan)
@@ -19,7 +19,7 @@
 
 ## Contrat d'exécution
 
-Ce plan est appliqué par une session **Sonnet** (`/plan-run`) qui suit les modes opératoires à la lettre et constate les critères sur pièces. Pour chaque tâche : application → constat des critères → si échec, 1 retry → si nouvel échec, Plan B s'il existe (`[risque: haut]`) → sinon **arrêt du run** : la session n'invente rien, écrit une `Synthèse de blocage` dans la tâche (nature, tentatives, pièces, options, champ `Directive de reprise` vide) et rend la main. L'utilisateur fait arbitrer la synthèse par **Fable**, reporte la décision dans `Directive de reprise`, puis relance `/plan-run`. **Effet nul = canal suspect** : si une modification appliquée avec succès ne produit aucun changement observable, le retry audite le canal d'observation (rendu/visible/bindé/tick) par un test discriminant à effet grossier — jamais un deuxième tuning à l'aveugle. **Directive de reprise** : si la cause du blocage n'est pas prouvée, la directive Fable commence par une expérience discriminante qui prouve/réfute la cause, et le run constate cette preuve avant d'appliquer le fix.
+Ce plan est appliqué par une session **Sonnet** (`/plan-run`) qui suit les modes opératoires à la lettre et constate les critères sur pièces. Pour chaque tâche : application → constat des critères → si échec, 1 retry → si nouvel échec, Plan B s'il existe (`[risque: haut]`) → sinon **arrêt du run** : la session n'invente rien, écrit une `Synthèse de blocage` dans la tâche (nature, tentatives, pièces, options, champ `Directive de reprise` vide) et rend la main. L'utilisateur fait investiguer la synthèse en session **Opus** via `/plan-debug` (qui ne remonte à Fable que si le jugement frontier est nécessaire), reporte la `Directive de reprise` produite, puis relance `/plan-run`. **Effet nul = canal suspect** : si une modification appliquée avec succès ne produit aucun changement observable, le retry audite le canal d'observation (rendu/visible/bindé/tick) par un test discriminant à effet grossier — jamais un deuxième tuning à l'aveugle. **Directive de reprise** : si la cause du blocage n'est pas prouvée, la directive commence par une expérience discriminante qui prouve/réfute la cause, et le run constate cette preuve avant d'appliquer le fix.
 
 ## Pre-mortem
 

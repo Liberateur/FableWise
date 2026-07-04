@@ -1,19 +1,19 @@
 ---
 name: plan-run
-description: Exécuter un plan produit par /plan, tâche par tâche, en session Sonnet - la session applique elle-même les tâches (parallélisation par sous-agents quand les périmètres sont disjoints), vérifie les critères binaires, et sur blocage s'arrête sans inventer en écrivant une synthèse de blocage pour arbitrage Fable. Déclencher avec "/plan-run" suivi du chemin du plan, "exécute le plan", "lance le run du plan X". Re-entrant - relancer /plan-run reprend là où le plan s'était arrêté.
+description: Exécuter un plan produit par /plan, tâche par tâche, en session Sonnet - la session applique elle-même les tâches (parallélisation par sous-agents quand les périmètres sont disjoints), vérifie les critères binaires, et sur blocage s'arrête sans inventer en écrivant une synthèse de blocage, investiguée en session Opus via /plan-debug (Fable seulement si /plan-debug le recommande). Déclencher avec "/plan-run" suivi du chemin du plan, "exécute le plan", "lance le run du plan X". Re-entrant - relancer /plan-run reprend là où le plan s'était arrêté.
 ---
 
 # /plan-run — Exécution d'un plan (session Sonnet)
 
 Exécuter le fichier plan passé en argument (format `plan-template.md`, produit par `/plan`). Le fichier plan est **la source de vérité** : le relire avant chaque décision, y écrire chaque progression. Un run interrompu (crash, compaction, stop utilisateur, blocage) doit pouvoir reprendre par un simple `/plan-run` relancé.
 
-**Principe** : le plan a été rédigé par Fable pour être **appliqué sans re-décider**. La session Sonnet applique les modes opératoires à la lettre ; face à un problème ou un choix non couvert, elle **s'arrête, n'invente rien**, et synthétise le blocage dans le plan pour que l'utilisateur le fasse arbitrer par Fable.
+**Principe** : le plan a été rédigé par Fable pour être **appliqué sans re-décider**. La session Sonnet applique les modes opératoires à la lettre ; face à un problème ou un choix non couvert, elle **s'arrête, n'invente rien**, et synthétise le blocage dans le plan pour que l'utilisateur le fasse investiguer en session **Opus** via `/plan-debug` — qui enquête sur pièces et ne remonte à Fable que si le jugement frontier est réellement nécessaire.
 
 ## Étape 0 — GARDE-FOU MODÈLE (bloquant, avant toute autre action)
 
 Identifier le modèle de la session courante. Si famille **Fable/Mythos** ou **Opus** : **STOP IMMÉDIAT**, afficher exactement :
 
-> ⛔ **fablewise bloqué** : cette session tourne sur **{modèle}**. Un run facture tout le volume d'exécution au tarif premium. Relance `/plan-run` depuis une session **Sonnet** — Fable n'intervient que pour arbitrer les synthèses de blocage qu'on lui rapporte.
+> ⛔ **fablewise bloqué** : cette session tourne sur **{modèle}**. Un run facture tout le volume d'exécution au tarif premium. Relance `/plan-run` depuis une session **Sonnet** — les blocages s'investiguent en session **Opus** via `/plan-debug` (Fable seulement si `/plan-debug` le recommande).
 
 Sinon, continuer.
 
@@ -30,7 +30,7 @@ Si `.claude/fablewise-notify` existe (contenu : une URL ntfy/webhook), envoyer u
 1. Lire le fichier plan en entier. Inexistant ou hors template : le signaler et s'arrêter. **Compatibilité plans anciens** : ignorer les tags `[modèle:]` et `[vérif:]` (tout s'exécute en Sonnet) et les anciennes lignes « Politique d'escalade » avec leurs budgets pré-0.21 (remplacées par le contrat de blocage ci-dessous) ; la ligne d'en-tête **`Escalades Fable : n/m`** (0.26+), elle, fait foi ; un plan sans Mode opératoire reste exécutable (Quoi + Contexte font directive). Plan ancien sans les lignes `Run en cours` / `Escalades Fable` : les ajouter (`—` / `0/5`).
 2. Statut d'en-tête : `🟡 en attente de validation` → demander la validation (GATE) avant tout. `✅ terminé` → le dire et s'arrêter. `⏸ en attente humaine` → relire le bloc « Attendu humain » du Rapport de run, constater sur pièces si les gestes attendus ont été faits (leurs critères machine) : oui → clore ces tâches et continuer ; non → le redire en une lecture et s'arrêter (en exécution planifiée : proposer de désactiver la planification). **Ordre inter-plans** : si l'en-tête porte `À exécuter après : <plan>`, lire le statut du plan préalable ; s'il n'est pas `✅ terminé` : STOP, expliquer, ne continuer que sur GO explicite (noté au Journal).
 3. **Verrou de run** : si la ligne `Run en cours` porte un horodatage de moins de 2 h → un autre run semble actif sur ce plan. Run interactif : STOP, demander à l'utilisateur. Run autonome (flag `.claude/fablewise-autorun`, boucle externe ou tâche planifiée — la relance ne part qu'après la mort de la session précédente) : reprendre d'office en remplaçant le verrou, noté au Rapport de run. Horodatage ≥ 2 h ou `—` : poser le verrou (identifiant de session + horodatage ISO) et continuer. Le verrou est **rafraîchi à chaque tâche close** et remis à `—` à tout arrêt (Étape 4).
-4. **Blocage en attente** : si le plan contient une `Synthèse de blocage` sans `Directive de reprise` remplie → STOP, la montrer, rappeler comment la faire arbitrer (voir Étape 3). Si une `Directive de reprise` est remplie : l'appliquer à la tâche concernée (c'est le point de reprise) — si la directive commence par une **expérience discriminante** (cause non prouvée), exécuter d'abord l'expérience et constater son résultat sur pièces : cause réfutée → ne PAS appliquer le fix, compléter la synthèse avec ce constat et re-blocage (l'arbitrage repart informé) ; cause prouvée → appliquer le fix.
+4. **Blocage en attente** : si le plan contient une `Synthèse de blocage` sans `Directive de reprise` remplie → STOP, la montrer, rappeler comment la faire investiguer (voir Étape 3). Si une `Directive de reprise` est remplie : l'appliquer à la tâche concernée (c'est le point de reprise) — si la directive commence par une **expérience discriminante** (cause non prouvée), exécuter d'abord l'expérience et constater son résultat sur pièces : cause réfutée → ne PAS appliquer le fix, compléter la synthèse avec ce constat et re-blocage (l'investigation repart informée) ; cause prouvée → appliquer le fix.
 5. Inventorier : `✅` faites, `⏸` bloquées, `[humain:]` en attente, `⬜`/`🔄` restantes. Une `🔄` orpheline (run interrompu) est retraitée comme `⬜` (noté au Journal).
 6. Passer le statut à `🔄 en cours`. Annoncer brièvement le point de reprise.
 
@@ -45,11 +45,11 @@ Répéter tant qu'il reste des tâches `⬜` dont toutes les dépendances sont `
 5. **Échec ou choix non couvert** : 1 retry (avec le constat d'échec en entrée). **Effet nul = canal suspect** : si la modification s'est appliquée sans erreur mais ne produit AUCUN changement observable (visuel, sortie, comportement), le retry ne re-tune pas la valeur — il audite le **canal d'observation** : l'objet observé est-il rendu/visible/bindé, le système tick-t-il, l'instrument mesure-t-il le bon endroit ? Preuve par test discriminant à effet grossier (valeur absurde, couleur criarde, masquage A/B) : si le test grossier ne change rien non plus, le canal est mort — c'est LUI le constat à corriger ou à synthétiser, pas le paramètre. Second échec : **si la tâche a un Plan B** (`[risque: haut]`), l'appliquer — c'est le changement de cap que Fable a déjà décidé. Si pas de Plan B, si le Plan B échoue aussi, ou face à un vrai choix → **Étape 3 (blocage)**.
 6. **Clôture de tâche** : critères constatés → `[statut: ✅]`, Journal complété (bloc CHECKPOINT, tentatives, écarts, constats des critères). Repo git : proposer un commit (`fablewise: T<n> <titre>`) — le faire si préautorisé, sinon le noter au rapport. **Mettre à jour le fichier plan après CHAQUE tâche** (dont l'horodatage de la ligne `Run en cours`), jamais en lot.
 
-## Étape 3 — Blocage : s'arrêter, synthétiser, faire arbitrer par Fable
+## Étape 3 — Blocage : s'arrêter, synthétiser, faire investiguer par Opus (`/plan-debug`)
 
 Conditions : double échec sans Plan B applicable, ancre introuvable, choix non couvert par le plan, mutation inattendue hors périmètre.
 
-1. Marquer la tâche `[statut: ⏸]`, **incrémenter la ligne `Escalades Fable` de l'en-tête** (chaque synthèse écrite décompte 1 ; un arbitrage Fable ne décompte rien), et écrire dans le plan (section de la tâche) une **Synthèse de blocage** — courte et complète, c'est elle qui contrôle le coût de l'arbitrage :
+1. Marquer la tâche `[statut: ⏸]`, **incrémenter la ligne `Escalades Fable` de l'en-tête** (chaque synthèse écrite décompte 1 ; une investigation `/plan-debug` ou un arbitrage Fable ne décompte rien), et écrire dans le plan (section de la tâche) une **Synthèse de blocage** — courte et complète, c'est elle qui contrôle le coût de l'investigation :
 
 ```
 #### ⛔ Synthèse de blocage — YYYY-MM-DD
@@ -58,16 +58,16 @@ Conditions : double échec sans Plan B applicable, ancre introuvable, choix non 
 - Tenté : <quoi → résultat, une ligne par tentative (dont Plan B le cas échéant)>
 - Pièces : <extraits strictement nécessaires — message d'erreur, diff court ; jamais de logs entiers>
 - Options : <options envisagées, avec avis factuel>
-- Directive de reprise : <VIDE — à remplir par l'arbitrage Fable. Cause non prouvée → commencer par une expérience discriminante (test A/B, effet grossier) qui la prouve/réfute ; le run constatera la preuve avant d'appliquer le fix.>
+- Directive de reprise : <VIDE — à remplir par l'investigation `/plan-debug` (Opus), ou l'arbitrage Fable si `/plan-debug` le recommande. Cause non prouvée → commencer par une expérience discriminante (test A/B, effet grossier) qui la prouve/réfute ; le run constatera la preuve avant d'appliquer le fix.>
 ```
 
 2. **Arrêter le run** : statut d'en-tête `🔴 interrompu`, remplir le Rapport de run (Étape 4), puis afficher la synthèse et ce rappel exact :
 
-> ⛔ **Run arrêté sur blocage.** Fais arbitrer par Fable : ouvre une session **Fable** et colle la Synthèse de blocage (ou demande « arbitre le blocage du plan {chemin} »). Reporte sa décision dans le champ `Directive de reprise` du plan, puis relance `/plan-run {chemin}` — la reprise appliquera la directive.
+> ⛔ **Run arrêté sur blocage.** Fais investiguer par Opus : ouvre une session **Opus** et lance `/plan-debug {chemin}` — il enquête sur pièces et rédige la `Directive de reprise` (il ne remonte à **Fable** que s'il juge le jugement frontier nécessaire). Reporte la directive dans le champ `Directive de reprise` du plan, puis relance `/plan-run {chemin}` — la reprise appliquera la directive.
 
 Exception : si le blocage ne gèle qu'une branche indépendante (aucune tâche restante n'en dépend, `[touche:]` disjoints), proposer à l'utilisateur de continuer les autres branches avant l'arrêt — son choix, jamais silencieux.
 
-**Budget épuisé** : si l'incrément porte `Escalades Fable` au-delà de son budget (`n/m` dépassé), écrire quand même la synthèse, mais le rappel change : recommander **`/plan-rework`** plutôt qu'un nouvel arbitrage — un plan qui bloque m fois est probablement mal parti (découpage, contexte ou hypothèses), et re-arbitrer tâche par tâche coûte plus cher que le refondre.
+**Budget épuisé** : si l'incrément porte `Escalades Fable` au-delà de son budget (`n/m` dépassé), écrire quand même la synthèse, mais le rappel change : recommander **`/plan-rework`** plutôt qu'une nouvelle investigation ou arbitrage — un plan qui bloque m fois est probablement mal parti (découpage, contexte ou hypothèses), et re-arbitrer tâche par tâche coûte plus cher que le refondre.
 
 ## Étape 4 — Fin de run et rapport
 

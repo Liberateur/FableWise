@@ -2,6 +2,15 @@
 
 All notable changes to **fablewise** are documented here. Format inspired by [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). The plugin was developed iteratively on 2026-07-02/03 under its working name *plan-runner*, renamed *fablewise* for public release.
 
+## [0.28.0] — 2026-07-04
+
+**Blockage escalation reroutes to Opus (`/plan-debug`), off Fable.** In the ocean sessions, taking every `Synthèse de blocage` to a Fable session burned premium tokens on investigation volume (screenshots, test replays, full-plan reads). That volume now lands on Opus — cheaper, and it holds volume the way Fable must not — with Fable reached only when `/plan-debug` judges the frontier truly necessary. See D-29.
+
+- **`/plan-run` stop-and-synthesize now points to `/plan-debug` (Opus)** instead of a Fable arbitration session: the reminder, the `Directive de reprise` contract, the guard note and the budget wording all route through `/plan-debug`; Fable stays the documented last resort (its call is `/plan-debug`'s to make).
+- **Four-layer propagation**: `/plan`, `/plan-rework`, the plan template (Contrat d'exécution, `Escalades Fable` comment, Directive de reprise), `task-executor`, README, CLAUDE.md and the marketplace/plugin descriptions all updated in lockstep — "blockage → Fable arbitration" becomes "blockage → Opus investigation via `/plan-debug`, Fable last resort".
+- **`/plan-debug` tie-in**: when a plan carries a `Synthèse de blocage`, the debug prompt it produces serves as the `Directive de reprise` to paste back before relaunching `/plan-run`.
+- Unchanged: the `Escalades Fable` header budget line (name kept for legacy-plan compatibility; an investigation no more decrements it than an arbitration did), the Directive-de-reprise resume machinery, and the loop/hook contract (still stops at `🔴`, never crosses it).
+
 ## [0.27.0] — 2026-07-04
 
 **`/plan-debug` — an Opus investigation layer for stuck plans.** Motivated by the ocean-plan sessions where a Fable session was burning premium tokens on screenshots, test replays and full-plan reads. Additive command; no change to the existing pipeline (skills, agents, plan template untouched).

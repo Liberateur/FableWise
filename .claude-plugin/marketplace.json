@@ -7,7 +7,7 @@
     {
       "name": "fablewise",
       "source": "./",
-      "description": "Fable designs, Sonnet applies. Plans are written by the frontier model in its own session — grounded by delegated exploration and quarantined web research — then executed by Sonnet, which stops and synthesizes for Fable arbitration instead of improvising."
+      "description": "Fable designs, Sonnet applies. Plans are written by the frontier model in its own session — grounded by delegated exploration and quarantined web research — then executed by Sonnet, which stops and synthesizes for Opus investigation (/plan-debug, Fable only when truly needed) instead of improvising."
     }
   ]
 }

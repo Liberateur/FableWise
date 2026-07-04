@@ -63,7 +63,7 @@ Rédiger le plan au template `references/plan-template.md`, directement dans le 
 - **`[humain: <geste>]`** sur toute tâche que seule une personne peut faire (rebuild + relance d'un outil vivant, geste UI sans verbe outillé — cf. les capacités d'environnement rapportées à l'exploration, manipulation physique) : `/plan-run` ne la tentera jamais, la listera dans « Attendu humain » et continuera les branches indépendantes. **Séquencer pour minimiser les allers-retours humains** : regrouper les tâches `[humain:]` et leurs dépendantes en fin de chaîne quand c'est possible, pour qu'un run autonome traverse le maximum avant de rendre la main. Le budget de la ligne d'en-tête `Escalades Fable` (défaut 5) se fixe ici, selon la taille et le risque du plan.
 - **Pre-mortem** : incident report fictif de l'échec du plan, au passé, concret (fichiers/fonctions/causes plausibles) — chaque cause convertie en critère supplémentaire ou Plan B sur la tâche concernée.
 - **Dépendances minimales** (`deps:`), **ordre inter-plans** via la ligne d'en-tête `À exécuter après` si un autre plan doit passer d'abord (recouvrement `[touche:]`, ressource exclusive partagée, dépendance logique).
-- **Contrat d'exécution** (repris du template) : Sonnet applique ; en cas de problème il s'arrête, n'invente rien, et synthétise le blocage dans le plan pour arbitrage Fable.
+- **Contrat d'exécution** (repris du template) : Sonnet applique ; en cas de problème il s'arrête, n'invente rien, et synthétise le blocage dans le plan pour investigation Opus (`/plan-debug`, Fable en dernier recours).
 - Pas de code tout fait dans le plan : des directives et des ancres.
 
 **Anti-troncature** : au-delà de ~6 tâches, écrire le fichier en plusieurs passes (Write pour l'en-tête + sections communes, puis Edit pour ajouter les tâches par blocs de 3-4) — jamais tout le plan dans une seule réponse longue.
@@ -84,7 +84,7 @@ Statut du plan : **`🟢 validé`** — pas d'étape de validation : la vraie va
 > ```
 > /plan-run {chemin exact du plan}
 > ```
-> L'exécution ne se fait JAMAIS dans cette session Fable — Sonnet applique, Fable arbitre les blocages qu'on lui rapporte.
+> L'exécution ne se fait JAMAIS dans cette session Fable — Sonnet applique ; les blocages s'investiguent en session Opus via `/plan-debug` (Fable en dernier recours).
 
 ## Récap de consommation (obligatoire, dernière action de la commande)
 

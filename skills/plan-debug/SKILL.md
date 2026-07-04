@@ -78,6 +78,7 @@ Rendre à l'utilisateur, **sans créer ni modifier aucun fichier** (le plan rest
 - **N'exécute jamais le debug** : il rend le prompt pour une session neuve, quel que soit le modèle recommandé (y compris Opus).
 - Constat sur pièces, cause prouvée ≠ hypothèse, effet nul = canal suspect ; aucune invention — un manque résiduel est signalé (`⚠ à vérifier`), jamais comblé.
 - **Jamais Fable pour cette commande** (garde-fou Opus) : Fable ne tient pas le volume — c'est précisément ce que cette commande lui épargne.
+- **Point d'escalade de `/plan-run`** : quand le plan porte une `Synthèse de blocage` (run arrêté), le prompt de debug produit tient lieu de `Directive de reprise` — l'utilisateur le reporte dans le plan et relance `/plan-run`. Si l'investigation conclut qu'il faut le jugement frontier, la reco est **Fable** (dernier recours).
 
 ## Récap de consommation (obligatoire, dernière action de la commande)
 

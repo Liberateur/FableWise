@@ -27,4 +27,4 @@ ecarts: <écarts vs mode opératoire, ou aucun>
 verification: <comment constater concrètement chaque critère>
 ```
 
-Si bloqué : rapport de blocage — nature du problème en 3 lignes, ce que tu as tenté et le résultat, extraits strictement nécessaires (message d'erreur, pas de logs entiers), options envisagées avec ton avis. Jamais d'auto-déclaration de succès sans expliquer comment le vérifier — c'est la session /plan-run qui constate les critères et décide (retry, Plan B, ou synthèse de blocage pour Fable).
+Si bloqué : rapport de blocage — nature du problème en 3 lignes, ce que tu as tenté et le résultat, extraits strictement nécessaires (message d'erreur, pas de logs entiers), options envisagées avec ton avis. Jamais d'auto-déclaration de succès sans expliquer comment le vérifier — c'est la session /plan-run qui constate les critères et décide (retry, Plan B, ou synthèse de blocage).

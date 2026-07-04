@@ -20,14 +20,15 @@ Since v0.23 two more surfaces exist and must be checked when a change touches ru
 ## Non-negotiable invariants
 
 Cost (v0.21 seat assignment — see D-21):
-- Design commands (`/plan`, `/plan-rework`, `/plan-prompt`) run in a **Fable** session; `/plan-run` runs in a **Sonnet** session. The model guards (Étape 0 of every skill) block the wrong direction and must never be weakened.
+- Design commands (`/plan`, `/plan-rework`, `/plan-prompt`) run in a **Fable** session; `/plan-run` runs in a **Sonnet** session; `/plan-debug` (blockage investigation) runs in an **Opus** session. The model guards (Étape 0 of every skill) block the wrong direction and must never be weakened.
+- Opus is the **investigation seat** (`/plan-debug`, since v0.28): unlike Fable it deliberately holds the volume a stuck plan requires (full-plan read, test replays, captures, live-system dumps) — cheaper than Fable and the default escalation for a `Synthèse de blocage`; Fable is reached only when `/plan-debug` judges the frontier truly necessary.
 - The Fable design session **never holds volume**: no project-file reads, no web, no MCP inspection, no screenshots in session — exploration, research, inventories and evidence packs are delegated to Sonnet/Haiku sub-agents returning compressed syntheses (web agents: 4-fetch cap, injection quarantine per D-11/D-18).
 - Fable is never an executor model.
 
 Quality (root-cause discipline since v0.26 — see D-26):
 - Criteria are constated ON EVIDENCE by the run session (commands run, diffs read; a sub-agent report is a lead, not a proof), finding-before-verdict, unverifiable ≠ validated. Sub-agent binary artifacts are hash-checked in-session (executor CHECKPOINTs carry `shasum` + size, re-checked); modified live-system properties are re-read independently.
 - Null effect = suspect channel: a change that applies cleanly but changes nothing observable triggers an observation-channel audit with a crude discriminating test — never a second blind tuning. A `Directive de reprise` for an unproven cause starts with a discriminating experiment, constated before the fix.
-- On any uncovered problem the run **stops without inventing** — `Synthèse de blocage` written into the plan (+1 on the header's `Escalades Fable` budget; exhausted → recommend /plan-rework), user-mediated Fable arbitration via `Directive de reprise`. Reporting a blockage is a success; inventing a workaround is a failure.
+- On any uncovered problem the run **stops without inventing** — `Synthèse de blocage` written into the plan (+1 on the header's `Escalades Fable` budget; exhausted → recommend /plan-rework), user-mediated investigation in an Opus session via `/plan-debug` (escalated to Fable only when frontier judgment is truly needed), reported back through `Directive de reprise`. Reporting a blockage is a success; inventing a workaround is a failure.
 - Frozen acceptance tests are untouchable; anchored edits (quote before modify). Execution is user-launched by construction (/plan never runs anything; /plan-run is a separate, deliberate command) and any deletion is user-gated; interactive questions happen only when comprehension genuinely requires them — commands otherwise run end-to-end without approval steps.
 - The plan file on disk is the single source of truth: re-entrant, updated after every task, fully re-read after any context compaction. No side registries.
 
