@@ -13,7 +13,7 @@ Claude's frontier model understands requests better than anything else — so **
 
 Cowork (Claude desktop app): **Customize > Settings > Plugins** > **Add marketplace** > `Liberateur/FableWise` > install **fablewise**.
 
-> ⚠️ **Design commands run from a Fable session** (`/plan`, `/plan-rework`, `/plan-prompt`) — **execution runs from a Sonnet session** (`/plan-run`). Built-in guards enforce both directions.
+> ⚠️ **Design commands run from a Fable session** (`/plan`, `/plan-rework`, `/plan-prompt`) — **execution runs from a Sonnet session** (`/plan-run`), and **`/plan-debug` runs from an Opus session** (it absorbs investigation volume off Fable). Built-in guards enforce every direction.
 
 ```
 /plan add rate-limiting to the public API
@@ -21,28 +21,28 @@ Cowork (Claude desktop app): **Customize > Settings > Plugins** > **Add marketpl
 
 ## How it works
 
-**`/plan` — turn a request into a ready-to-run plan (nothing is executed):**
+**`/plan` — turn a request into a ready-to-run plan (nothing runs):**
 
 1. **Fable** (your session) understands the request — need vs. assumed means.
-2. **Sonnet** explores your project and returns a compressed synthesis — the Fable session never reads raw files or browses the web itself (cost + injection quarantine).
-3. **Fable** challenges — asks only when there's a real comprehension doubt or structuring choice.
-4. **Sonnet/Haiku** run delegated web research (capped, quarantined) and extract verbatim evidence from the files the plan will cite.
-5. **Fable writes the plan itself**: grouped tasks with chewed-through operating procedures, machine-checkable binary criteria (user validation batched into gate tasks), scope tags, `[contexte: lourd]` tags on heavy-output tasks, `[humain: <gesture>]` tags on actions only a person can do (informed by an environment-capability probe at exploration), an escalation budget in the header, pre-decided Plan Bs, a pre-mortem — written for Sonnet to apply without re-deciding.
+2. **Sonnet** explores your project and returns a compressed synthesis — the Fable session never reads raw files or browses the web (cost + injection quarantine).
+3. **Fable** challenges — only on a real comprehension doubt or structuring choice.
+4. **Sonnet/Haiku** run capped, quarantined web research and extract verbatim evidence from the files the plan will cite.
+5. **Fable writes the plan itself**, for Sonnet to apply without re-deciding: grouped tasks with chewed-through operating procedures, binary machine-checkable criteria (subjective sign-off batched into gate tasks), and tags — `[touche:]` scope, `[contexte: lourd]` heavy output, `[humain:]` person-only actions (from a capability probe) — plus an escalation budget, pre-decided Plan Bs, and a pre-mortem.
 6. **Haiku** gate-checks every reference in one scripted pass — nothing hallucinated.
-7. The plan lands **🟢 ready** — it just waits for you to launch `/plan-run`.
+7. The plan lands **🟢 ready**, waiting for you to launch `/plan-run`.
 
 **`/plan-run` — execute it (from a fresh Sonnet session):**
 
-1. The session applies tasks itself, following operating procedures to the letter (anchored edits, frozen tests) — **dispatches parallel executors when task scopes (`[touche:]`) don't overlap**, and **always delegates `[contexte: lourd]` tasks** (capture-heavy audits, builds, verbose tests) so images and logs never saturate the run session's context. Untagged heavy tasks are detected before execution and tagged in the plan. Say **"delegate everything"** at launch (or let the run switch automatically at its first compaction) to run every remaining task in executors — maximum headroom on very long plans; criteria are still constated in-session, on evidence.
-2. Every task's binary criteria are checked on evidence — commands run, diffs read, never taken on faith. Sub-agent binary artifacts (captures, exports) are hash-checked in-session, never trusted "distinct" on report; modified live-system properties are re-read independently. User sign-off lives only in explicit **gate tasks**; `[humain:]` tasks are never attempted — they land in a decision-ready **"Attendu humain"** block and independent branches continue.
-3. On failure: one retry → pre-decided Plan B → **the run stops**. **Null effect = suspect channel**: a change that applies cleanly but changes nothing observable triggers an observation-channel audit (rendered? visible? bound? ticking?) with a crude discriminating test — never a second blind tuning. No improvisation: a **blockage synthesis** (nature, attempts, evidence, options) is written into the plan and counted against the header's escalation budget; you take it to Fable, paste the directive back (starting with a discriminating experiment when the cause is unproven — the run verifies the proof before applying the fix), and relaunch — the run resumes exactly there. Budget exhausted → the run recommends `/plan-rework` instead of another arbitration.
-4. Progress, journals and costs live in the plan file — **resume anytime**. A run continues through context compaction (full plan re-read) and only ends on blockage, human-awaited stop, or completion. A `Run en cours` header line (session + timestamp, stale after 2 h) guards against two sessions working the same plan.
+1. The session applies tasks to the letter (anchored edits, frozen tests), **dispatching parallel executors when `[touche:]` scopes don't overlap** and **always delegating `[contexte: lourd]` tasks** (capture-heavy audits, builds, verbose tests) so images and logs never saturate its context. Untagged heavy tasks are detected and tagged before execution. Say **"delegate everything"** at launch (or let the run switch at its first compaction) to push every remaining task into executors — maximum headroom on long plans, criteria still constated in-session.
+2. Binary criteria are checked on evidence — commands run, diffs read, never on faith. Sub-agent artifacts are hash-checked in-session, live-system changes re-read independently. Sign-off lives only in **gate tasks**; `[humain:]` tasks are never attempted — they land in a decision-ready **"Attendu humain"** block while independent branches continue.
+3. On failure: one retry → pre-decided Plan B → **the run stops** and writes a **blockage synthesis** (nature, attempts, evidence, options) into the plan, counted against the escalation budget. You take it to Fable, paste the directive back — which opens with a proof step when the cause is unproven — and relaunch; the run resumes exactly there. Budget exhausted → it recommends `/plan-rework`. And **null effect = suspect channel**: a change that applies but changes nothing observable triggers an observation-channel audit (rendered? visible? bound?), never a second blind tuning.
+4. Progress, journals and costs live in the plan file — **resume anytime**. A run crosses context compaction (full re-read) and only ends on blockage, human-awaited stop, or completion. A `Run en cours` header line (session + timestamp, stale after 2 h) guards against two sessions on the same plan.
 
-**Running to completion, unattended.** Since 0.22 a single run session goes the distance (heavy tasks delegated, compaction crossed). What remains is session mortality — a session that dies or ends is relaunched, and re-entrance makes every relaunch idempotent. Two carriers, one per environment:
+**Running to completion, unattended.** Since 0.22 a single run goes the distance (heavy tasks delegated, compaction crossed). What remains is session mortality — a session that dies is relaunched, and re-entrance makes every relaunch idempotent. Three carriers:
 
-- **CLI (Claude Code)** — `scripts/fablewise-loop.sh <plan.md> [max_iter]` from the project root: relaunches headless Sonnet sessions until the plan reaches one of its legitimate ends — `✅` done (exit 0), `🔴` blockage → Fable arbitration (exit 2), `⏸` human action awaited or no progress → your hands/eye are required, see the plan's **Attendu humain** block (exit 3). It never crosses a blockage.
-- **Claude desktop app (Cowork)** — no headless relaunch exists, so use a **scheduled task** in the project's workspace: e.g. hourly, prompt `/plan-run <plan> — autonomous, no questions` (name the plan explicitly — never "the current plan"). The scheduled session must be **Sonnet** (the model guard blocks Fable/Opus). On a terminal state (`✅`, `🔴`, `⏸` pending) the run detects it in one read and offers to disable the schedule instead of re-working.
-- **Stop hook (opt-in, anti-premature-stop)** — `echo "<plan.md>" > .claude/fablewise-autorun` before launching: the plugin's `Stop` hook then blocks any session stop while the plan is neither `✅`, `🔴` nor `⏸`, feeding back "re-read the plan and continue". The run exits legitimately by writing the real state into the header (deleting the flag file remains the safety net for states no status describes). Claude Code's native consecutive-block cap bounds worst cases; hook support in the desktop app is undocumented — the scheduled task covers the same need with latency. The hook prevents stopping *early*; the loop/schedule cures sessions that *die* — combine them for full coverage.
+- **CLI (Claude Code)** — `scripts/fablewise-loop.sh <plan.md> [max_iter]` from the project root relaunches headless Sonnet sessions until a legitimate end: `✅` done (exit 0), `🔴` blockage → Fable (exit 2), `⏸` human action or no progress → see the plan's **Attendu humain** block (exit 3). It never crosses a blockage.
+- **Cowork (desktop app)** — no headless relaunch, so use a **scheduled task**: e.g. hourly `/plan-run <plan> — autonomous, no questions` (name the plan explicitly). Must be a **Sonnet** session. On a terminal state it detects it in one read and offers to disable the schedule instead of re-working.
+- **Stop hook (opt-in)** — `echo "<plan.md>" > .claude/fablewise-autorun` before launching: the `Stop` hook blocks any stop while the plan isn't `✅`/`🔴`/`⏸`, feeding back "re-read the plan and continue"; the run exits by writing the real state (deleting the flag is the safety net). Hook support in the desktop app is undocumented — the scheduled task covers the same need. The hook prevents stopping *early*; the loop/schedule cures sessions that *die*.
 
 ## Commands
 
@@ -52,24 +52,25 @@ Cowork (Claude desktop app): **Customize > Settings > Plugins** > **Add marketpl
 | `/plan-run <plan file>` | **Sonnet** | Apply it task by task; parallel when scopes are disjoint; stop-and-synthesize on blockage (re-entrant) |
 | `/plan-rework <plans or folder>` | **Fable** | Merge, re-challenge and rebuild aging plans (history condensed, sources deleted after your GO) |
 | `/plan-prompt <request>` | **Fable** | One-shot: an optimal prompt + the right model, no plan file |
+| `/plan-debug <plan file>` | **Opus** | Investigate a stuck/buggy plan (Opus holds the volume): a problem→cause digest + a model reco (Opus vs Fable) + a ready-to-paste debug prompt — read-only, runs nothing |
 
 ## Why this shape
 
-A measured head-to-head (2026-07-03, same request, cold — see [benchmarks/](benchmarks/)) showed the previous multi-agent pipeline at **$7.13 / 25 min API** vs **$0.77 / 91 s** for direct no-tools Fable — **9× the cost, 17× the time, equivalent design quality**. But the naked run also showed why grounding matters: a post-cutoff prior asserted as fact, a design colliding with the project's existing architecture, a scope decided without asking. v0.21 keeps the grounding and drops the coordination: projected **~$3.2 and ~10-13 min** for the same request (−55 % cost, −60/70 % time vs the pipeline — projection from measured components, to be replaced by the first real run). What earned its keep was kept:
+A measured head-to-head (2026-07-03, same request, cold — see [benchmarks/](benchmarks/)) put the old multi-agent pipeline at **$7.13 / 25 min** vs **$0.77 / 91 s** for direct no-tools Fable — 9× the cost, 17× the time, equivalent design quality. But the naked run showed why grounding matters: a post-cutoff prior asserted as fact, a design colliding with the existing architecture, a scope decided without asking. v0.21 keeps the grounding, drops the coordination — projected **~$3.2 / ~10-13 min** for the same request (−55 % cost, −60/70 % time; to be replaced by the first real run). What earned its keep:
 
-- **Delegation of volume** — exploration, web research and inventories run in cheap sub-agents returning compressed syntheses; the Fable session pays context rent on judgment only.
+- **Delegation of volume** — exploration, research and inventories run in cheap sub-agents returning compressed syntheses; the Fable session pays context rent on judgment only.
 - **Injection quarantine** — web researchers are read-only, capped, and return typed data; untrusted content never becomes instructions.
-- **Grounding gates** — verbatim evidence before writing, a scripted anti-hallucination pass after; unverifiable references are flagged `⚠`, never guessed.
-- **Discipline at run time** — anchored edits (quote before modify), frozen acceptance tests (touch a test = instant fail), scope-tag parallelism with named exclusive resources (`editor`, `db`…), root-cause discipline (null effect → audit the observation channel; unproven cause → discriminating experiment before the fix), hash-checked sub-agent artifacts, and the stop-and-synthesize contract: reporting a blockage is a success, inventing a workaround is a failure.
-- **The plan file is the single source of truth** — re-entrant, updated after every task, fully re-read after compaction.
+- **Grounding gates** — verbatim evidence before writing, a scripted anti-hallucination pass after; unverifiable references flagged `⚠`, never guessed.
+- **Run-time discipline** — anchored edits, frozen tests (touch one = instant fail), scope-tag parallelism with exclusive-resource mutexes, root-cause discipline (null effect → audit the channel; unproven cause → prove before fixing), hash-checked artifacts, and stop-and-synthesize: reporting a blockage is a success, inventing a workaround a failure.
+- **The plan file is the single source of truth** — re-entrant, updated after every task, re-read after compaction.
 
 ## Requirements & notes
 
 - Claude Code or Cowork with per-subagent model override (`sonnet`, `haiku`, `opus`).
-- `/plan`, `/plan-rework`, `/plan-prompt` require a **Fable** session; `/plan-run` requires a **Sonnet** session — guards block the wrong direction with zero side effects.
-- Plans produced by fablewise ≤ 0.20 still run: `/plan-run` ignores legacy per-task model tags and pre-0.21 escalation-policy budgets (the 0.26 `Escalades Fable` header line is authoritative; missing header lines are added on first touch).
-- Optional per-project files: `.claude/fablewise-lessons.md` (compounding lessons, user-approved, kept factual and narrow; relevant ones are injected verbatim into task executors) · `.claude/fablewise-notify` (ntfy/webhook URL for notifications).
-- Skill instructions are currently in French (outputs follow your project's language); English translation is the top roadmap item — PRs welcome.
+- `/plan`, `/plan-rework`, `/plan-prompt` require a **Fable** session; `/plan-run` requires **Sonnet** — guards block the wrong direction with zero side effects.
+- Plans from fablewise ≤ 0.20 still run: `/plan-run` ignores legacy model tags and pre-0.21 escalation budgets (the `Escalades Fable` header line is authoritative; missing lines added on first touch).
+- Optional per-project files: `.claude/fablewise-lessons.md` (compounding lessons, user-approved, factual and narrow; relevant ones injected into executors) · `.claude/fablewise-notify` (ntfy/webhook URL).
+- Skill instructions are in French for now (outputs follow your project's language); English translation is the top roadmap item.
 
 ## Contributing
 

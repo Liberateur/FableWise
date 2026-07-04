@@ -2,6 +2,14 @@
 
 All notable changes to **fablewise** are documented here. Format inspired by [Keep a Changelog](https://keepachangelog.com); versions follow [semver](https://semver.org). The plugin was developed iteratively on 2026-07-02/03 under its working name *plan-runner*, renamed *fablewise* for public release.
 
+## [0.27.0] — 2026-07-04
+
+**`/plan-debug` — an Opus investigation layer for stuck plans.** Motivated by the ocean-plan sessions where a Fable session was burning premium tokens on screenshots, test replays and full-plan reads. Additive command; no change to the existing pipeline (skills, agents, plan template untouched).
+
+- **New command `skills/plan-debug/SKILL.md`** (Opus session, Étape 0 guard blocks any non-Opus model). Opus deliberately **holds the volume** Fable must not — it re-reads the plan, replays tests, loads captures and dumps the live system in-session — then returns three things and nothing else: a compact **problem→cause digest** (`[prouvé]`/`[hypothèse]` + evidence), a **one-line model reco** (Opus enough vs Fable needed), and a long **self-contained debug prompt** for a fresh session.
+- **Read-only**: never writes the plan or any project file, never runs the debug itself (strict separation like `/plan-prompt`). Reuses the run's root-cause discipline (finding-before-verdict, proven cause ≠ hypothesis, null effect = suspect channel, `⚠ à vérifier` for unproven references).
+- **Guard rationale**: Opus is cheaper than Fable and absorbs the investigation mass; Fable is escalated only at the end, on a condensed digest, when frontier judgment is truly required — the seat assignment of D-21/D-25 unchanged (Fable never holds volume; runs stay Sonnet).
+
 ## [0.26.0] — 2026-07-04
 
 **Root-cause discipline & human dependency first-class.** Driven by a full audit of the ocean-plan session cluster (runs 4-7: five runs lost on a `hidden in game` root cause, one identical-captures tool race, one migration/run collision, one ghost escalation budget), cross-checked against 2026 state-of-the-art posts on agent harnesses. See D-26, D-27, D-28.
